@@ -7,6 +7,9 @@ public abstract class GraphicsComponent {
 	
 	// padding around the element
 	public EdgeTuple padding = new EdgeTuple(5);
+	
+	public PVector maxSize = null;
+	public PVector minSize = null;
 
 	public boolean disabled;
 	public boolean active;

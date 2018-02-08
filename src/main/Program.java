@@ -30,55 +30,39 @@ public class Program extends PApplet {
 	@Override
 	public void setup() {
 		Fonts.Init();
-
 		keys = new boolean[256];
 
-		// StaticGridLayout grid = new StaticGridLayout(3, 2);
-		// for (int i = 0; i < 3; i++) {
-		// for (int j = 0; j < 2; j++) {
-		// grid.addComponent(i, j, new Button("Yes " + i + "," + j, () -> {
-		// }));
-		// }
-		// }
-		// frame = new Frame(grid);
+		// sample GUI
+		StaticGridLayout outerGrid = new StaticGridLayout(2, 1);
+		{
+			DynamicGridLayout innerGrid = new DynamicGridLayout();
+			innerGrid.addComponent(new Button("A", () -> {
+			}), 0, 0);
+			innerGrid.addComponent(new Button("B", () -> {
+			}), 1, 1);
+			innerGrid.addComponent(new Button("C", () -> {
+			}), 3, 2);
+			outerGrid.addComponent(innerGrid);
+		}
+		{
+			StaticGridLayout innerGrid = new StaticGridLayout(2, 2);
+			innerGrid.addComponent(new Button("X", () -> {
+			}), 0, 0);
+			innerGrid.addComponent(new Button("Y", () -> {
+			}), 1, 0);
+			innerGrid.addComponent(new Textbox(), 0, 1);
+			innerGrid.addComponent(new Button("W", () -> {
+			}), 1, 1);
+			outerGrid.addComponent(innerGrid);
+		}
+		frame = new Frame(outerGrid);
 
-		DynamicGridLayout grid = new DynamicGridLayout();
-		frame = new Frame(grid);
-
-		// grid.addComponent(new Button("", () -> {
-		// grid.removeComponentAt(0, 0);
-		// }), 0, 0);
-		// grid.addComponent(new Button("", () -> {
-		// grid.removeComponentAt(1, 0);
-		// }), 1, 0);
-		// grid.addComponent(new Button("", () -> {
-		// grid.removeComponentAt(2,1);
-		// }), 2, 1);
 	}
 
 	@Override
 	public void draw() {
 
 		background(255);
-
-		DynamicGridLayout grid = ((DynamicGridLayout) frame.layout);
-		System.out.println(grid.getSizeX() + "," + grid.getSizeY());
-
-		if (frameCount % 60 == 0) {
-			int x = R.nextInt(10);
-			int y = R.nextInt(8);
-
-			final int fx = x;
-			final int fy = y;
-			Button b = new Button(x + "," + y, () -> {
-				((DynamicGridLayout) frame.layout).removeComponentAt(fx, fy);
-			});
-			((DynamicGridLayout) frame.layout).addComponent(b, x, y);
-
-			// x = R.nextInt(10);
-			// y = R.nextInt(8);
-			// ((DynamicGridLayout)frame.layout).removeComponentAt(x, y);
-		}
 
 		frame.update();
 		frame.render();

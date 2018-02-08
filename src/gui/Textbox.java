@@ -37,6 +37,7 @@ public class Textbox extends Button {
 		onKeyTab = () -> {
 		};
 		onKeyEnter = () -> {
+			append(System.lineSeparator());
 		};
 	}
 
@@ -104,6 +105,12 @@ public class Textbox extends Button {
 			text = s + "_";
 		} else {
 			text = s;
+		}
+	}
+	
+	public void append(String s) {
+		for (char c : s.toCharArray()) {
+			append(c);
 		}
 	}
 

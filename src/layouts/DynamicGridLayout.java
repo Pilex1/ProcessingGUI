@@ -7,7 +7,7 @@ import gui.GraphicsComponent;
 import processing.core.PVector;
 
 // a gridlayout that dynamically changes size depending on the number of elements
-public class DynamicGridLayout extends Layout {
+public class DynamicGridLayout extends GridLayout {
 
 	private ArrayList<ArrayList<GraphicsComponent>> components = new ArrayList<>();
 	private int x, y;
@@ -33,6 +33,7 @@ public class DynamicGridLayout extends Layout {
 		return true;
 	}
 
+	@Override
 	public GraphicsComponent getComponentAt(int x, int y) {
 		if (x >= this.x)
 			return null;
@@ -84,46 +85,6 @@ public class DynamicGridLayout extends Layout {
 		}
 	}
 
-	public int getSizeX() {
-		return x;
-	}
-
-	public int getSizeY() {
-		return y;
-	}
-
-	@Override
-	protected void onUpdate(PVector pos, PVector size) {
-		float gridX = (size.x - padding.left - padding.right) / x;
-		float gridY = (size.y - padding.top - padding.bottom) / y;
-		for (int i = 0; i < x; i++) {
-			for (int j = 0; j < y; j++) {
-				float posX = pos.x + padding.left + i * gridX;
-				float posY = pos.y + padding.top + j * gridY;
-				GraphicsComponent g = getComponentAt(i, j);
-				if (g != null) {
-					g.update(new PVector(posX, posY), new PVector(gridX, gridY));
-				}
-			}
-		}
-	}
-
-	@Override
-	protected void onRender(PVector pos, PVector size) {
-		float gridX = (size.x - padding.left - padding.right) / x;
-		float gridY = (size.y - padding.top - padding.bottom) / y;
-		for (int i = 0; i < x; i++) {
-			for (int j = 0; j < y; j++) {
-				float posX = pos.x + padding.left + i * gridX;
-				float posY = pos.y + padding.top + j * gridY;
-				GraphicsComponent g = getComponentAt(i, j);
-				if (g != null) {
-					g.render(new PVector(posX, posY), new PVector(gridX, gridY));
-				}
-			}
-		}
-	}
-
 	@Override
 	protected ArrayList<GraphicsComponent> getAllComponents() {
 		ArrayList<GraphicsComponent> l = new ArrayList<>();
@@ -136,5 +97,15 @@ public class DynamicGridLayout extends Layout {
 			}
 		}
 		return l;
+	}
+	
+	@Override
+	public int getSizeX() {
+		return x;
+	}
+
+	@Override
+	public int getSizeY() {
+		return y;
 	}
 }
