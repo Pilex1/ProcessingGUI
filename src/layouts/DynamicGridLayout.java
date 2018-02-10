@@ -15,10 +15,9 @@ public class DynamicGridLayout extends GridLayout {
 	public DynamicGridLayout() {
 	}
 
-	// adds the specified component into cell [x,y]
-	// returns true if added successfully, false otherwise (if there is already
-	// another component at where you want to add the new component)
+	@Override
 	public boolean addComponent(GraphicsComponent g, int x, int y) {
+		if (x<0||y<0) return false;
 		if (getComponentAt(x, y) != null)
 			return false;
 		for (int i = this.x; i <= x; i++) {
@@ -30,12 +29,13 @@ public class DynamicGridLayout extends GridLayout {
 		}
 		gcs.set(y, g);
 		updateSize();
+		recalculateBounds();
 		return true;
 	}
 
 	@Override
 	public GraphicsComponent getComponentAt(int x, int y) {
-		if (x >= this.x)
+		if (x < 0 || y < 0 || x >= this.x)
 			return null;
 		ArrayList<GraphicsComponent> l = components.get(x);
 		if (y >= l.size())
@@ -98,7 +98,7 @@ public class DynamicGridLayout extends GridLayout {
 		}
 		return l;
 	}
-	
+
 	@Override
 	public int getSizeX() {
 		return x;

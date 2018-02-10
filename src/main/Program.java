@@ -5,6 +5,7 @@ import java.util.Random;
 import gui.*;
 import layouts.DynamicGridLayout;
 import layouts.Frame;
+import layouts.GridLayout;
 import layouts.StaticGridLayout;
 import processing.core.*;
 
@@ -33,7 +34,8 @@ public class Program extends PApplet {
 		keys = new boolean[256];
 
 		// sample GUI
-		StaticGridLayout outerGrid = new StaticGridLayout(2, 1);
+		GridLayout outerGrid = new StaticGridLayout(2,1);
+		outerGrid.keepGridSizesEqual=false;
 		{
 			DynamicGridLayout innerGrid = new DynamicGridLayout();
 			innerGrid.addComponent(new Button("A", () -> {
@@ -42,7 +44,7 @@ public class Program extends PApplet {
 			}), 1, 1);
 			innerGrid.addComponent(new Button("C", () -> {
 			}), 3, 2);
-			outerGrid.addComponent(innerGrid);
+			outerGrid.addComponent(innerGrid, 0, 0);
 		}
 		{
 			StaticGridLayout innerGrid = new StaticGridLayout(2, 2);
@@ -53,7 +55,8 @@ public class Program extends PApplet {
 			innerGrid.addComponent(new Textbox(), 0, 1);
 			innerGrid.addComponent(new Button("W", () -> {
 			}), 1, 1);
-			outerGrid.addComponent(innerGrid);
+			innerGrid.maxSize = new PVector(200, 300);
+			outerGrid.addComponent(innerGrid, 1, 0);
 		}
 		frame = new Frame(outerGrid);
 
@@ -61,9 +64,6 @@ public class Program extends PApplet {
 
 	@Override
 	public void draw() {
-
-		background(255);
-
 		frame.update();
 		frame.render();
 	}

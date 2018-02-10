@@ -86,6 +86,10 @@ public class Button extends Label {
 
 	@Override
 	protected void onUpdate(PVector rel, PVector size) {
-		hoveredOver = (P.mouseX >= rel.x + padding.left && P.mouseX <= rel.x +size.x-padding.right&& P.mouseY >= rel.y+padding.top && P.mouseY <= rel.y + size.y-padding.bottom);
+		boolean hoveredOver_n = (P.mouseX >= rel.x + padding.left && P.mouseX <= rel.x +size.x-padding.right&& P.mouseY >= rel.y+padding.top && P.mouseY <= rel.y + size.y-padding.bottom);
+		if (hoveredOver!=hoveredOver_n) {
+			requireGraphicalUpdate();
+			hoveredOver= hoveredOver_n;
+		}
 	}
 }

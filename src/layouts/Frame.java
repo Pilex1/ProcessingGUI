@@ -9,6 +9,8 @@ public class Frame  {
 
 	public Frame(Layout layout) {
 		this.layout = layout;
+		layout.minSize=new PVector(P.WIDTH,P.HEIGHT);
+		layout.maxSize=new PVector(P.WIDTH,P.HEIGHT);
 	}
 
 	public void update() {

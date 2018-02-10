@@ -7,8 +7,6 @@ import processing.core.PVector;
 
 public class StaticGridLayout extends GridLayout {
 
-	public boolean keepGridSizesEqual = true;
-
 	private int x, y;
 	private GraphicsComponent[][] components;
 
@@ -18,16 +16,14 @@ public class StaticGridLayout extends GridLayout {
 		components = new GraphicsComponent[x][y];
 	}
 
-	// tries to add component at cell[x,y]
-	// returns true if added successfully
-	// false otherwise (either there is already another component there
-	// or the index is out of bounds
+	@Override
 	public boolean addComponent(GraphicsComponent g, int x, int y) {
-		if (x >= this.x || y >= this.y)
+		if (x >= this.x || y >= this.y || x < 0 || y < 0)
 			return false;
 		if (getComponentAt(x, y) != null)
 			return false;
 		components[x][y] = g;
+		recalculateBounds();
 		return true;
 	}
 
@@ -38,6 +34,7 @@ public class StaticGridLayout extends GridLayout {
 			for (int i = 0; i < x; i++) {
 				if (components[i][j] == null) {
 					components[i][j] = g;
+					recalculateBounds();
 					return true;
 				}
 			}
@@ -55,7 +52,7 @@ public class StaticGridLayout extends GridLayout {
 
 	@Override
 	public GraphicsComponent getComponentAt(int x, int y) {
-		if (x >= this.x || y >= this.y)
+		if (x >= this.x || y >= this.y || x < 0 || y < 0)
 			return null;
 		return components[x][y];
 	}

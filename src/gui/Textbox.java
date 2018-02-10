@@ -55,6 +55,7 @@ public class Textbox extends Button {
 			} else {
 				append(key);
 			}
+			requireGraphicalUpdate();
 		}
 	}
 
@@ -67,10 +68,12 @@ public class Textbox extends Button {
 				} else {
 					editing = false;
 				}
+				requireGraphicalUpdate();
 			}
 		} else {
 			if (mouseBtn == PConstants.LEFT && hoveredOver) {
 				editing = true;
+				requireGraphicalUpdate();
 			}
 		}
 	}
