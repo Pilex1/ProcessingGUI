@@ -1,9 +1,10 @@
-package gui;
+package components;
 
 import static main.Program.*;
 
 import java.awt.Color;
 
+import core.IAction;
 import processing.core.*;
 
 public class Textbox extends Button {
@@ -17,12 +18,12 @@ public class Textbox extends Button {
 
 	private Boolean setEditing;
 
-	protected IAction onKeyTab;
-	protected IAction onKeyEnter;
+	public IAction onKeyTab = ()->{};
+	public IAction onKeyEnter = ()->append(System.lineSeparator());
 
 	// top left pos
-	public Textbox() {
-		super("", new IAction() {
+	public Textbox(String text) {
+		super(text, new IAction() {
 			@Override
 			public void action() {
 			}
@@ -33,14 +34,12 @@ public class Textbox extends Button {
 		backgroundColor = Button.BACKGROUND_COLOR;
 		hoverColor = Button.HOVER_COLOR;
 		disabledColor = Button.DISABLED_COLOR;
-
-		onKeyTab = () -> {
-		};
-		onKeyEnter = () -> {
-			append(System.lineSeparator());
-		};
 	}
 
+	public Textbox() {
+		this("");
+	}
+	
 	@Override
 	public void onKeyType(char key) {
 		if (editing) {
@@ -55,7 +54,7 @@ public class Textbox extends Button {
 			} else {
 				append(key);
 			}
-			requireGraphicalUpdate();
+			requestGraphicalUpdate();
 		}
 	}
 
@@ -68,12 +67,12 @@ public class Textbox extends Button {
 				} else {
 					editing = false;
 				}
-				requireGraphicalUpdate();
+				requestGraphicalUpdate();
 			}
 		} else {
 			if (mouseBtn == PConstants.LEFT && hoveredOver) {
 				editing = true;
-				requireGraphicalUpdate();
+				requestGraphicalUpdate();
 			}
 		}
 	}

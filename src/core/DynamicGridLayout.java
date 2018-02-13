@@ -1,9 +1,8 @@
-package layouts;
+package core;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
 
-import gui.GraphicsComponent;
 import processing.core.PVector;
 
 // a gridlayout that dynamically changes size depending on the number of elements
@@ -17,8 +16,9 @@ public class DynamicGridLayout extends GridLayout {
 
 	@Override
 	public boolean addComponent(GraphicsComponent g, int x, int y) {
-		if (x<0||y<0) return false;
-		if (getComponentAt(x, y) != null)
+		if (x < 0 || y < 0)
+			return false;
+		if (getComponent(x, y) != null)
 			return false;
 		for (int i = this.x; i <= x; i++) {
 			components.add(new ArrayList<>());
@@ -30,11 +30,12 @@ public class DynamicGridLayout extends GridLayout {
 		gcs.set(y, g);
 		updateSize();
 		recalculateBounds();
+		g.parent = this;
 		return true;
 	}
 
 	@Override
-	public GraphicsComponent getComponentAt(int x, int y) {
+	public GraphicsComponent getComponent(int x, int y) {
 		if (x < 0 || y < 0 || x >= this.x)
 			return null;
 		ArrayList<GraphicsComponent> l = components.get(x);
@@ -45,11 +46,12 @@ public class DynamicGridLayout extends GridLayout {
 
 	// removes the component at cell [x,y]
 	// returns null if the component does not exist
-	public GraphicsComponent removeComponentAt(int x, int y) {
-		GraphicsComponent g = getComponentAt(x, y);
+	public GraphicsComponent removeComponent(int x, int y) {
+		GraphicsComponent g = getComponent(x, y);
 		if (g != null) {
 			ArrayList<GraphicsComponent> l = components.get(x);
 			l.set(y, null);
+			g.parent=null;
 		}
 		updateSize();
 		return g;

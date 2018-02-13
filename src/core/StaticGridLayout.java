@@ -1,8 +1,7 @@
-package layouts;
+package core;
 
 import java.util.ArrayList;
 
-import gui.GraphicsComponent;
 import processing.core.PVector;
 
 public class StaticGridLayout extends GridLayout {
@@ -20,10 +19,11 @@ public class StaticGridLayout extends GridLayout {
 	public boolean addComponent(GraphicsComponent g, int x, int y) {
 		if (x >= this.x || y >= this.y || x < 0 || y < 0)
 			return false;
-		if (getComponentAt(x, y) != null)
+		if (getComponent(x, y) != null)
 			return false;
 		components[x][y] = g;
 		recalculateBounds();
+		g.parent = this;
 		return true;
 	}
 
@@ -35,6 +35,7 @@ public class StaticGridLayout extends GridLayout {
 				if (components[i][j] == null) {
 					components[i][j] = g;
 					recalculateBounds();
+					g.parent = this;
 					return true;
 				}
 			}
@@ -43,15 +44,16 @@ public class StaticGridLayout extends GridLayout {
 	}
 
 	public GraphicsComponent removeComponentAt(int x, int y) {
-		GraphicsComponent g = getComponentAt(x, y);
+		GraphicsComponent g = getComponent(x, y);
 		if (g != null) {
 			components[x][y] = null;
+			g.parent = null;
 		}
 		return g;
 	}
 
 	@Override
-	public GraphicsComponent getComponentAt(int x, int y) {
+	public GraphicsComponent getComponent(int x, int y) {
 		if (x >= this.x || y >= this.y || x < 0 || y < 0)
 			return null;
 		return components[x][y];

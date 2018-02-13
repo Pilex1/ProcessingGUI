@@ -1,9 +1,5 @@
-package layouts;
+package core;
 
-import java.util.Arrays;
-import java.util.stream.IntStream;
-
-import gui.GraphicsComponent;
 import processing.core.PVector;
 import util.MathUtil;
 import util.PosSizeTuple;
@@ -11,8 +7,9 @@ import util.PosSizeTuple;
 public abstract class GridLayout extends Layout {
 
 	public boolean keepGridSizesEqual = true;
+	private PosSizeTuple[][] posSizeCache = null;
 
-	protected abstract GraphicsComponent getComponentAt(int x, int y);
+	public abstract GraphicsComponent getComponent(int x, int y);
 
 	// adds the specified component into position [x,y]
 	// returns true if added successfully, false otherwise (if there is already
@@ -27,16 +24,16 @@ public abstract class GridLayout extends Layout {
 	// recalculate min and max sizes
 	// this should be called whenever a component is added/removed
 	protected void recalculateBounds() {
-		minSize = new PVector(getCumulativeMinWidth(), getCumulativeMinHeight());
-		maxSize = new PVector(getCumulativeMaxWidth(), getCumulativeMaxHeight());
+		setMinSize(getCumulativeMinWidth(), getCumulativeMinHeight());
+		setMaxSize(getCumulativeMaxWidth(), getCumulativeMaxHeight());
 	}
 
 	protected float getMaxWidthInCol(int col) {
 		float width = Float.MAX_VALUE;
 		for (int row = 0; row < getSizeY(); row++) {
-			GraphicsComponent g = getComponentAt(col, row);
+			GraphicsComponent g = getComponent(col, row);
 			if (g != null) {
-				width = Math.min(width, g.maxSize.x);
+				width = Math.min(width, g.getMaxWidth());
 			}
 		}
 		return width;
@@ -45,9 +42,9 @@ public abstract class GridLayout extends Layout {
 	protected float getMaxHeightInRow(int row) {
 		float height = Float.MAX_VALUE;
 		for (int col = 0; col < getSizeX(); col++) {
-			GraphicsComponent g = getComponentAt(col, row);
+			GraphicsComponent g = getComponent(col, row);
 			if (g != null) {
-				height = Math.min(height, g.maxSize.y);
+				height = Math.min(height, g.getMaxHeight());
 			}
 		}
 		return height;
@@ -56,9 +53,9 @@ public abstract class GridLayout extends Layout {
 	protected float getMinWidthInCol(int col) {
 		float width = 0;
 		for (int row = 0; row < getSizeY(); row++) {
-			GraphicsComponent g = getComponentAt(col, row);
+			GraphicsComponent g = getComponent(col, row);
 			if (g != null) {
-				width = Math.max(width, g.minSize.x);
+				width = Math.max(width, g.getMinWidth());
 			}
 		}
 		return width;
@@ -67,9 +64,9 @@ public abstract class GridLayout extends Layout {
 	protected float getMinHeightInRow(int row) {
 		float height = 0;
 		for (int col = 0; col < getSizeX(); col++) {
-			GraphicsComponent g = getComponentAt(col, row);
+			GraphicsComponent g = getComponent(col, row);
 			if (g != null) {
-				height = Math.max(height, g.minSize.y);
+				height = Math.max(height, g.getMinHeight());
 			}
 		}
 		return height;
@@ -183,8 +180,9 @@ public abstract class GridLayout extends Layout {
 		return total;
 	}
 
-	private PosSizeTuple[][] getPosSizeArray(PVector pos, PVector size) {
-		PosSizeTuple[][] arr = new PosSizeTuple[getSizeX()][getSizeY()];
+	@Override
+	protected void recalculatePositions(PVector pos, PVector size) {
+		posSizeCache = new PosSizeTuple[getSizeX()][getSizeY()];
 		PVector[][] sizes = new PVector[getSizeX()][getSizeY()];
 
 		float[] minWidths = getMinWidthsInCols();
@@ -226,11 +224,12 @@ public abstract class GridLayout extends Layout {
 		boolean[] ignoreY = new boolean[getSizeY()];
 		while (extraSpace.x > 0) {
 			float maxX = MathUtil.min(maxWidths, ignoreX);
-			
+
 			// number of components left to fill
-			long n =MathUtil.countFalse(ignoreX);
-			if (n==0)break;
-			
+			long n = MathUtil.countFalse(ignoreX);
+			if (n == 0)
+				break;
+
 			// if the space we need to fill exceeds maxX
 			// then we restrict it to maxX
 			float fillX = extraSpace.x / n;
@@ -248,7 +247,7 @@ public abstract class GridLayout extends Layout {
 					sizes[i][j].x += fillX;
 				}
 			}
-			
+
 			for (int i = 0; i < ignoreX.length; i++) {
 				if (maxWidths[i] == maxX) {
 					ignoreX[i] = true;
@@ -258,10 +257,11 @@ public abstract class GridLayout extends Layout {
 
 		while (extraSpace.y > 0) {
 			float maxY = MathUtil.min(maxHeights, ignoreY);
-			
+
 			// number of components left to fill
-			long n =MathUtil.countFalse(ignoreY);
-			if (n==0) break;
+			long n = MathUtil.countFalse(ignoreY);
+			if (n == 0)
+				break;
 
 			// if the space we need to fill exceeds maxY
 			// then we restrict it to maxY
@@ -281,7 +281,7 @@ public abstract class GridLayout extends Layout {
 					sizes[i][j].y += fillY;
 				}
 			}
-			
+
 			for (int i = 0; i < ignoreY.length; i++) {
 				if (maxHeights[i] == maxY) {
 					ignoreY[i] = true;
@@ -293,79 +293,35 @@ public abstract class GridLayout extends Layout {
 		for (int i = 0; i < getSizeX(); i++) {
 			float y = pos.y;
 			for (int j = 0; j < getSizeY(); j++) {
-				arr[i][j] = new PosSizeTuple(new PVector(x, y), sizes[i][j]);
+				posSizeCache[i][j] = new PosSizeTuple(new PVector(x, y), sizes[i][j]);
 				y += sizes[0][j].y;
 			}
 			x += sizes[i][0].x;
 		}
-
-		/*
-		 * float w_buffer = extraSpace.x / getSizeX(); float h_buffer = extraSpace.y /
-		 * getSizeY();
-		 * 
-		 * for (int i = 0; i < getSizeX(); i++) {
-		 * 
-		 * float w = 0; if (maxWidths[i] < minWidths[i]) { // hopefully, this case
-		 * doesn't get triggered too often // take precedence over minWidth w =
-		 * minWidths[i]; } else if (maxWidths[i] < minWidths[i] + w_buffer) { w =
-		 * maxWidths[i]; } else { w = minWidths[i] + w_buffer; }
-		 * 
-		 * for (int j = 0; j < getSizeY(); j++) {
-		 * 
-		 * float h = 0; if (maxHeights[j] < minHeights[j]) { h = minHeights[j]; } else
-		 * if (maxHeights[j] < minHeights[j] + h_buffer) { h = maxHeights[j]; } else { h
-		 * = minHeights[j] + h_buffer; }
-		 * 
-		 * // set the pos and sizes now PVector pos_n = new PVector(pos.x + i * w, pos.y
-		 * + j * h); PVector size_n = new PVector(w, h); arr[i][j] = new
-		 * PosSizeTuple(pos_n, size_n); } }
-		 */
-
-		return arr;
 	}
 
 	@Override
 	protected void onRender(PVector pos, PVector size) {
-		PosSizeTuple[][] arr = getPosSizeArray(pos, size);
-		for (int i = 0; i < arr.length; i++) {
-			for (int j = 0; j < arr[i].length; j++) {
-				GraphicsComponent g = getComponentAt(i, j);
+		for (int i = 0; i < posSizeCache.length; i++) {
+			for (int j = 0; j < posSizeCache[i].length; j++) {
+				GraphicsComponent g = getComponent(i, j);
 				if (g != null) {
-					g.render(arr[i][j].pos, arr[i][j].size);
+					g.render(posSizeCache[i][j].pos, posSizeCache[i][j].size);
 				}
 			}
 		}
-
-		/*
-		 * float gridX = (size.x - padding.left - padding.right) / getSizeX(); float
-		 * gridY = (size.y - padding.top - padding.bottom) / getSizeY(); for (int i = 0;
-		 * i < getSizeX(); i++) { for (int j = 0; j < getSizeY(); j++) { float posX =
-		 * pos.x + padding.left + i * gridX; float posY = pos.y + padding.top + j *
-		 * gridY; GraphicsComponent g = getComponentAt(i, j); if (g != null) {
-		 * g.render(new PVector(posX, posY), new PVector(gridX, gridY)); } } }
-		 */
 	}
 
 	@Override
 	protected void onUpdate(PVector pos, PVector size) {
-		PosSizeTuple[][] arr = getPosSizeArray(pos, size);
-		for (int i = 0; i < arr.length; i++) {
-			for (int j = 0; j < arr[i].length; j++) {
-				GraphicsComponent g = getComponentAt(i, j);
+		for (int i = 0; i < posSizeCache.length; i++) {
+			for (int j = 0; j < posSizeCache[i].length; j++) {
+				GraphicsComponent g = getComponent(i, j);
 				if (g != null) {
-					g.update(arr[i][j].pos, arr[i][j].size);
+					g.update(posSizeCache[i][j].pos, posSizeCache[i][j].size);
 				}
 			}
 		}
-
-		/*
-		 * float gridX = (size.x - padding.left - padding.right) / getSizeX(); float
-		 * gridY = (size.y - padding.top - padding.bottom) / getSizeY(); for (int i = 0;
-		 * i < getSizeX(); i++) { for (int j = 0; j < getSizeY(); j++) { float posX =
-		 * pos.x + padding.left + i * gridX; float posY = pos.y + padding.top + j *
-		 * gridY; GraphicsComponent g = getComponentAt(i, j); if (g != null) {
-		 * g.update(new PVector(posX, posY), new PVector(gridX, gridY)); } } }
-		 */
 	}
 
 }

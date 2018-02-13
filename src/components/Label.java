@@ -1,9 +1,11 @@
-package gui;
+package components;
 
 import static main.Program.*;
 
 import java.awt.Color;
 
+import core.Fonts;
+import core.GraphicsComponent;
 import processing.core.*;
 
 public class Label extends GraphicsComponent {
@@ -24,8 +26,8 @@ public class Label extends GraphicsComponent {
 	public Label(String text) {
 		currentBackgroundColor = new Color(0, 0, 0, 0);
 
-		font = Fonts.Tw_Cen_MT;
-		textSize = 32;
+		font = Fonts.FreeSans;
+		textSize = 18;
 		textColor = Color.BLACK;
 		currentBackgroundColor = Color.LIGHT_GRAY;
 

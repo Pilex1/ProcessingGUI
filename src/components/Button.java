@@ -1,9 +1,11 @@
-package gui;
+package components;
 
 import static main.Program.*;
 
 import java.awt.Color;
 
+import core.Fonts;
+import core.IAction;
 import processing.core.*;
 
 public class Button extends Label {
@@ -15,22 +17,15 @@ public class Button extends Label {
 	private Color hoverColor, disabledColor, backgroundColor;
 
 	protected IAction onPress;
-	protected boolean hoveredOver;
+	protected boolean hoveredOver=false;
 
 	// top left position
-	public Button(String text, IAction onAction) {
+	public Button(String text, IAction onPress) {
 		super(text);
-
 		hoverColor = HOVER_COLOR;
 		disabledColor = DISABLED_COLOR;
 		backgroundColor = BACKGROUND_COLOR;
-
-		font = Fonts.Tw_Cen_MT;
-		this.text = text;
-
-		this.onPress = onAction;
-
-		hoveredOver = false;
+		this.onPress = onPress;
 	}
 
 	@Override
@@ -85,10 +80,10 @@ public class Button extends Label {
 	}
 
 	@Override
-	protected void onUpdate(PVector rel, PVector size) {
-		boolean hoveredOver_n = (P.mouseX >= rel.x + padding.left && P.mouseX <= rel.x +size.x-padding.right&& P.mouseY >= rel.y+padding.top && P.mouseY <= rel.y + size.y-padding.bottom);
+	protected void onUpdate(PVector pos, PVector size) {
+		boolean hoveredOver_n = (P.mouseX >= pos.x + padding.left && P.mouseX <= pos.x +size.x-padding.right&& P.mouseY >= pos.y+padding.top && P.mouseY <= pos.y + size.y-padding.bottom);
 		if (hoveredOver!=hoveredOver_n) {
-			requireGraphicalUpdate();
+			requestGraphicalUpdate();
 			hoveredOver= hoveredOver_n;
 		}
 	}

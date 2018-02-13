@@ -1,4 +1,4 @@
-package gui;
+package util;
 
 public class EdgeTuple {
 
