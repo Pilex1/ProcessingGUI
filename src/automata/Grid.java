@@ -81,7 +81,11 @@ public abstract class Grid<T> extends Canvas {
 		for (Vector2i i : toRender.keySet()) {
 			T t = toRender.get(i);
 			P.stroke(gridColor.getRGB());
-			P.strokeWeight(gridLineSize);
+			if (gridLineSize==0) {
+				P.noStroke();
+			} else {
+				P.strokeWeight(gridLineSize);
+			}
 			P.fill(getColor(t).getRGB());
 			P.rect(x + i.x * gridSize, y + i.y * gridSize, gridSize, gridSize);
 		}
