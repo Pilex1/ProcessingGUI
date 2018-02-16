@@ -6,6 +6,8 @@ import java.util.HashMap;
 import core.Canvas;
 
 import static main.Program.P;
+
+import processing.core.PGraphics;
 import processing.core.PVector;
 import util.Vector2i;
 
@@ -13,7 +15,7 @@ public abstract class Grid<T> extends Canvas {
 
 	public Color gridColor = Color.BLACK;
 	public int gridLineSize = 0;
-	public float gridSize = 1;
+	private float gridSize = 2;
 	public boolean square = false;
 	public boolean gridWrap = false;
 
@@ -30,13 +32,20 @@ public abstract class Grid<T> extends Canvas {
 	public Grid() {
 	}
 
+	public float getGridSize() {
+		return gridSize;
+	}
+
+	public void setGridSize(float gridSize) {
+		if (gridSize == this.gridSize)
+			return;
+		this.gridSize = gridSize;
+		requestPositionalUpdate();
+	}
+
 	public void clear() {
 		clearNext = true;
-		for (int i = 0; i < grid.length; i++) {
-			for (int j = 0; j < grid[i].length; j++) {
-				setCell(i, j, getDefault());
-			}
-		}
+		requestGraphicalUpdate();
 	}
 
 	public int getCenterX() {
@@ -76,14 +85,46 @@ public abstract class Grid<T> extends Canvas {
 				x = y = Math.min(x, y);
 			}
 		}
+		if (clearNext) {
+			buffer.beginDraw();
+			buffer.clear();
+			float x = pos.x + (size.x - buffer.width) / 2;
+			float y = pos.x + (size.y - buffer.height) / 2;
+			for (int i = 0; i < grid.length; i++) {
+				for (int j = 0; j < grid[i].length; j++) {
+					grid[i][j] = getDefault();
+					drawToGraphics(P.getGraphics(), i, j, grid[i][j]);
+				}
+			}
+			buffer.endDraw();
+		}
+	}
+
+	private void drawToGraphics(PGraphics g, int x, int y, T t) {
+		buffer.stroke(gridColor.getRGB());
+		if (gridLineSize == 0) {
+			buffer.noStroke();
+		} else {
+			buffer.strokeWeight(gridLineSize);
+		}
+		buffer.fill(getColor(t).getRGB());
+		buffer.rect(x * gridSize, y * gridSize, gridSize, gridSize);
 	}
 
 	@Override
 	protected void onRender(PVector pos, PVector size) {
+		if (clearNext) {
+			renderBuffer(pos, size);
+			clearNext = false;
+			return;
+		}
 		float x = pos.x + (size.x - buffer.width) / 2;
 		float y = pos.x + (size.y - buffer.height) / 2;
 		for (Vector2i i : toRender.keySet()) {
 			T t = toRender.get(i);
+			// drawToGraphics(P.getGraphics(), i.x, i.y, t);
+			// does not work, i dont think P.getGraphics() is a good idea
+
 			P.stroke(gridColor.getRGB());
 			if (gridLineSize == 0) {
 				P.noStroke();
@@ -92,8 +133,10 @@ public abstract class Grid<T> extends Canvas {
 			}
 			P.fill(getColor(t).getRGB());
 			P.rect(x + i.x * gridSize, y + i.y * gridSize, gridSize, gridSize);
+
 		}
 		toRender.clear();
+
 	}
 
 	public T getCell(int x, int y) {
@@ -134,15 +177,8 @@ public abstract class Grid<T> extends Canvas {
 		buffer.beginDraw();
 		if (!t.equals(cell)) {
 			toRender.put(v, t);
-			buffer.stroke(gridColor.getRGB());
-			if (gridLineSize == 0) {
-				buffer.noStroke();
-			} else {
-				buffer.strokeWeight(gridLineSize);
-			}
-			buffer.fill(getColor(t).getRGB());
-			buffer.rect(v.x * gridSize, v.y * gridSize, gridSize, gridSize);
 			grid[v.x][v.y] = t;
+			drawToGraphics(buffer, v.x, v.y, t);
 			requestGraphicalUpdate();
 		}
 		buffer.endDraw();
@@ -222,15 +258,7 @@ public abstract class Grid<T> extends Canvas {
 		buffer.beginDraw();
 		for (int i = 0; i < grid.length; i++) {
 			for (int j = 0; j < grid[i].length; j++) {
-				T t = grid[i][j];
-				buffer.stroke(gridColor.getRGB());
-				if (gridLineSize == 0) {
-					buffer.noStroke();
-				} else {
-					buffer.strokeWeight(gridLineSize);
-				}
-				buffer.fill(getColor(t).getRGB());
-				buffer.rect(i * gridSize, j * gridSize, gridSize, gridSize);
+				drawToGraphics(buffer, i, j, grid[i][j]);
 			}
 		}
 		buffer.endDraw();

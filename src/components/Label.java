@@ -47,6 +47,7 @@ public class Label extends GraphicsComponent {
 
 	public void setText(String text) {
 		this.text = text;
+		requestGraphicalUpdate();
 	}
 
 	public void setBackgroundColor(Color backgroundColor) {
@@ -55,6 +56,7 @@ public class Label extends GraphicsComponent {
 
 	public void setFont(PFont font) {
 		this.font = font;
+		requestGraphicalUpdate();
 	}
 
 	@Override

@@ -12,6 +12,9 @@ public class LangtonsAnt extends Grid<Integer> {
 	private ArrayList<Ant> antsToBeRemoved = new ArrayList<>();
 	private Move[] rule;
 
+	public Color[] colors = new Color[] { new Color(0xFFFFFF), new Color(0x96858F), new Color(0x6D7993), new Color(0x9099A2),
+			new Color(0x062F4F), new Color(0x813772), new Color(0xCAEBF2), new Color(0xC09F80) };
+
 	// speed of -2 = 1 update per 4 frames
 	// speed of -1 = 1 update per 2 frames
 	// speed of 0 = 1 update per frame
@@ -120,44 +123,60 @@ public class LangtonsAnt extends Grid<Integer> {
 	public int getStates() {
 		return rule.length;
 	}
-	
+
 	public boolean isRuleValid(String rule) {
 		Move[] ruleCopy = this.rule;
 		boolean valid = setRule(rule);
-		this.rule=ruleCopy;
+		this.rule = ruleCopy;
 		return valid;
+	}
+
+	public void setRule(int x) {
+		String s = Integer.toBinaryString(x);
+		rule = new Move[s.length()];
+		for (int i = 0; i < s.length(); i++) {
+			rule[i] = (s.charAt(i) == '0') ? new Move('L', 1) : new Move('R', 1);
+		}
 	}
 
 	// returns whether the rule has been successfully set
 	// if this returns false, then the rule is not valid
 	public boolean setRule(String rule) {
+		try {
+			int x = Integer.parseInt(rule);
+			setRule(x);
+			return true;
+		} catch (NumberFormatException e) {
+			
+		}
 		ArrayList<Move> moves = new ArrayList<>();
 		for (int i = 0; i < rule.length();) {
 			char c = rule.charAt(i);
 			if (!(c == 'N' || c == 'E' || c == 'S' || c == 'W' || c == 'L' || c == 'R')) {
-				System.err.println("Invalid rule: "+rule);
+				System.err.println("Invalid rule: " + rule);
 				return false;
 			}
 			String number = "";
 			int n = 1;
 			int j = i + 1;
-			if (j==rule.length()) {
-				moves.add(new Move(c,1));
-				break;
-			}
-			char c2 = rule.charAt(j);
-			while (c2 >= '0' && c <= '9') {
-				number += c2;
+
+			while (j < rule.length() && Character.isDigit(rule.charAt(j))) {
+				number += rule.charAt(j);
 				j++;
 			}
+			if (j == rule.length() && number.equals("")) {
+				moves.add(new Move(c, 1));
+				break;
+			}
+
 			try {
 				if (number.equals("")) {
-					n=1;
-				}else {
+					n = 1;
+				} else {
 					n = Integer.parseInt(number);
 				}
 			} catch (NumberFormatException e) {
-				System.err.println("Invalid rule: "+rule);
+				System.err.println("Invalid rule: " + rule);
 				return false;
 			}
 			moves.add(new Move(c, n));
@@ -172,6 +191,13 @@ public class LangtonsAnt extends Grid<Integer> {
 
 	public void addAnt(int x, int y) {
 		ants.add(new Ant(x, y));
+	}
+	
+	/**
+	 * Adds an ant to the center of the grid
+	 */
+	public void addAnt() {
+		addAnt(getCenterX(),getCenterY());
 	}
 
 	public void removeLastAnt() {
@@ -191,8 +217,11 @@ public class LangtonsAnt extends Grid<Integer> {
 
 	@Override
 	protected Color getColor(Integer t) {
-		float f = 1 - (float) t / (getStates() - 1);
-		return new Color(f, f, f);
+		/*
+		 * float f = 1 - (float) t / (getStates() - 1); return new Color(f, f, f);
+		 */
+		t = t % colors.length;
+		return colors[t];
 	}
 
 }

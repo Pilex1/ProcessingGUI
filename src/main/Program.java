@@ -30,6 +30,7 @@ public class Program extends PApplet {
 	public void settings() {
 		P = this;
 		size(WIDTH, HEIGHT);
+
 	}
 
 	private Layout sample1() {
@@ -89,38 +90,47 @@ public class Program extends PApplet {
 			l.gridWrap = true;
 			layout.addComponent(l);
 
-			StaticGridLayout gui = new StaticGridLayout(1, 7);
-			gui.addComponent(new Button("Spawn ant in middle (soz u cant spawn it anywhere else for now =D)", () -> {
-				l.addAnt(l.getCenterX(), l.getCenterY());
+			StaticGridLayout gui = new StaticGridLayout(1, 9);
+			gui.addComponent(new Button("Spawn ant in middle", () -> {
+				l.addAnt();
 			}));
 			gui.addComponent(new Button("Clear world", () -> {
 				l.clear();
+				l.removeAllAnts();
 			}));
 			gui.addComponent(new Button("Destroy all ants", () -> {
 				l.removeAllAnts();
 			}));
 
-			gui.addComponent(new Label("Rule"));
-			Textbox t_rule = new Textbox("RL");
+			Label lbl_rule = new Label("Rule: LR");
+			gui.addComponent(lbl_rule);
+			Textbox t_rule = new Textbox("LR");
 			t_rule.onKeyEnter = () -> {
 				if (l.isRuleValid(t_rule.getText())) {
 					l.setRule(t_rule.getText());
+					l.clear();
+					l.removeAllAnts();
+					l.addAnt();
+					lbl_rule.setText("Rule: " + t_rule.getText());
 				}
 			};
 			gui.addComponent(t_rule);
 
-			gui.addComponent(new Label(
-					"Speed (this is temporary until I implement sliders, so only add integers (can be negative)"));
+			gui.addComponent(new Label("Speed"));
 			IntTextbox t_speed = new IntTextbox("2");
 			t_speed.allowNegatives = true;
 			t_speed.onKeyEnter = () -> {
-				try {
-					int speed = Integer.parseInt(t_speed.getText());
-					l.speed = speed;
-				} catch (NumberFormatException e) {
-				}
+				l.speed = t_speed.getValue();
 			};
 			gui.addComponent(t_speed);
+			
+			gui.addComponent(new Label("Grid size"));
+			IntTextbox t_size = new IntTextbox("2");
+			t_size.onKeyEnter=()->{
+				l.setGridSize(t_size.getValue());
+			};
+			gui.addComponent(t_size);
+			
 			gui.setMaxWidth(200);
 			layout.addComponent(gui);
 

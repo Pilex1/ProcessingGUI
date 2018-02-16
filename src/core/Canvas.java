@@ -38,7 +38,7 @@ public abstract class Canvas extends GraphicsComponent {
 	@Override
 	protected abstract void onRender(PVector pos, PVector size);
 
-	void renderBuffer(PVector pos, PVector size) {
+	public void renderBuffer(PVector pos, PVector size) {
 		float extraX=size.x-buffer.width;
 		float extraY=size.y-buffer.height;
 		P.image(buffer.get(), pos.x+extraX/2, pos.y+extraY/2, buffer.width, buffer.height);

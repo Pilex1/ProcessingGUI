@@ -1,0 +1,2 @@
+R2L - fills a rotated square around itself - inside is quite chaotic
+LRRRRRLLR - fills a square around itself - not so chaotic
