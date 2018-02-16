@@ -1,23 +1,25 @@
 package components;
 
-import static main.Program.*;
+import static main.Program.P;
 
 import java.awt.Color;
 
 import core.Fonts;
 import core.IAction;
 import processing.core.*;
+import processing.event.MouseEvent;
 
 public class Button extends Label {
 
-	public static final Color HOVER_COLOR = new Color(0xf9bc63);
+	public static final Color HOVER_COLOR = new Color(0xfbbc63);
 	public static final Color BACKGROUND_COLOR = new Color(0xf4c98b);
 	public static final Color DISABLED_COLOR = new Color(0xafafae);
+	public static final Color CLICK_COLOR = new Color(0xffe1b7);
 
-	private Color hoverColor, disabledColor, backgroundColor;
+	private Color hoverColor, disabledColor, backgroundColor, clickColor;
 
-	protected IAction onPress;
-	protected boolean hoveredOver=false;
+	public IAction onPress;
+	protected boolean hoveredOver = false;
 
 	// top left position
 	public Button(String text, IAction onPress) {
@@ -25,43 +27,27 @@ public class Button extends Label {
 		hoverColor = HOVER_COLOR;
 		disabledColor = DISABLED_COLOR;
 		backgroundColor = BACKGROUND_COLOR;
+		clickColor = CLICK_COLOR;
 		this.onPress = onPress;
 	}
 
 	@Override
-	public void onMousePress(int mouseBtn) {
-		if (mouseBtn == PConstants.LEFT && hoveredOver && !disabled) {
+	public void onMousePress(MouseEvent event) {
+		if (event.getButton() == PConstants.LEFT && hoveredOver && !disabled) {
 			activate();
+			requestGraphicalUpdate();
 		}
 	}
 
-	public void setOnPress(IAction onPress) {
-		this.onPress = onPress;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
+	@Override
+	public void onMouseRelease(MouseEvent event) {
+		if (hoveredOver) {
+			requestGraphicalUpdate();
+		}
 	}
 
 	public void activate() {
 		onPress.action();
-	}
-
-	@Override
-	public void setBackgroundColor(Color backgroundColor) {
-		this.backgroundColor = backgroundColor;
-	}
-
-	public void setBackgroundColor(int red, int green, int blue) {
-		setBackgroundColor(new Color(red, green, blue));
-	}
-
-	public void setHoverColor(Color hoverColor) {
-		this.hoverColor = hoverColor;
-	}
-
-	public void setHoverColor(int red, int green, int blue) {
-		setHoverColor(new Color(red, green, blue));
 	}
 
 	@Override
@@ -70,7 +56,11 @@ public class Button extends Label {
 			super.currentBackgroundColor = disabledColor;
 		} else {
 			if (hoveredOver) {
-				super.currentBackgroundColor = hoverColor;
+				if (P.mousePressed && P.mouseButton == PConstants.LEFT) {
+					super.currentBackgroundColor = clickColor;
+				} else {
+					super.currentBackgroundColor = hoverColor;
+				}
 			} else {
 				super.currentBackgroundColor = backgroundColor;
 			}
@@ -81,10 +71,11 @@ public class Button extends Label {
 
 	@Override
 	protected void onUpdate(PVector pos, PVector size) {
-		boolean hoveredOver_n = (P.mouseX >= pos.x + padding.left && P.mouseX <= pos.x +size.x-padding.right&& P.mouseY >= pos.y+padding.top && P.mouseY <= pos.y + size.y-padding.bottom);
-		if (hoveredOver!=hoveredOver_n) {
+		boolean hoveredOver_n = (P.mouseX >= pos.x + padding.left && P.mouseX <= pos.x + size.x - padding.right
+				&& P.mouseY >= pos.y + padding.top && P.mouseY <= pos.y + size.y - padding.bottom);
+		if (hoveredOver != hoveredOver_n) {
 			requestGraphicalUpdate();
-			hoveredOver= hoveredOver_n;
+			hoveredOver = hoveredOver_n;
 		}
 	}
 }

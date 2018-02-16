@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import processing.core.*;
+import processing.event.MouseEvent;
 import util.EdgeTuple;
 import static main.Program.P;
 
@@ -112,7 +113,10 @@ public abstract class GraphicsComponent {
 	public void onKeyType(char key) {
 	}
 
-	public void onMousePress(int mouseBtn) {
+	public void onMousePress(MouseEvent event) {
+	}
+
+	public void onMouseRelease(MouseEvent event) {
 	}
 
 	protected abstract void onUpdate(PVector pos, PVector size);
@@ -146,7 +150,7 @@ public abstract class GraphicsComponent {
 
 	public final void render(PVector pos, PVector size) {
 		if (!disabled) {
-			
+
 			if (requireGraphicalUpdate && this instanceof Layout) {
 				P.strokeWeight(0);
 				Color backgroundColor = ((Layout) this).backgroundColor;
@@ -158,9 +162,9 @@ public abstract class GraphicsComponent {
 			// if the parent layout is not rendered, then any graphical updates
 			// in the child layout will not be carried out
 			if (requireGraphicalUpdate || this instanceof Layout) {
-				
+
 				if (this instanceof Canvas && requirePositionalUpdate) {
-					((Canvas)this).resize((int)size.x, (int)size.y);
+					((Canvas) this).resize((int) size.x, (int) size.y);
 					((Canvas) this).renderBuffer(pos, size);
 				} else {
 					onRender(pos, size);

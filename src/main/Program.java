@@ -6,11 +6,12 @@ import automata.BlankCanvas;
 import automata.LangtonsAnt;
 import automata.RandomCells;
 import components.Button;
-import components.DigitTextbox;
+import components.IntTextbox;
 import components.Label;
 import components.Textbox;
 import core.*;
 import processing.core.*;
+import processing.event.MouseEvent;
 
 public class Program extends PApplet {
 
@@ -82,22 +83,20 @@ public class Program extends PApplet {
 
 	private Layout langton() {
 		StaticGridLayout layout = new StaticGridLayout(2, 1);
-		layout.keepGridSizesEqual = false;
 		{
 			LangtonsAnt l = new LangtonsAnt();
 			l.square = true;
 			l.gridWrap = true;
 			layout.addComponent(l);
 
-			StaticGridLayout gui = new StaticGridLayout(1,10);
-			gui.keepGridSizesEqual=false;
+			StaticGridLayout gui = new StaticGridLayout(1, 7);
 			gui.addComponent(new Button("Spawn ant in middle (soz u cant spawn it anywhere else for now =D)", () -> {
 				l.addAnt(l.getCenterX(), l.getCenterY());
 			}));
-			gui.addComponent(new Button("Clear world", ()->{
+			gui.addComponent(new Button("Clear world", () -> {
 				l.clear();
 			}));
-			gui.addComponent(new Button("Destroy all ants", ()->{
+			gui.addComponent(new Button("Destroy all ants", () -> {
 				l.removeAllAnts();
 			}));
 
@@ -112,7 +111,7 @@ public class Program extends PApplet {
 
 			gui.addComponent(new Label(
 					"Speed (this is temporary until I implement sliders, so only add integers (can be negative)"));
-			DigitTextbox t_speed = new DigitTextbox("2");
+			IntTextbox t_speed = new IntTextbox("2");
 			t_speed.allowNegatives = true;
 			t_speed.onKeyEnter = () -> {
 				try {
@@ -145,8 +144,13 @@ public class Program extends PApplet {
 	}
 
 	@Override
-	public void mousePressed() {
-		frame.onMousePress(mouseButton);
+	public void mousePressed(MouseEvent event) {
+		frame.onMousePress(event);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent event) {
+		frame.onMouseRelease(event);
 	}
 
 	@Override

@@ -1,7 +1,9 @@
 package core;
 
 import static main.Program.P;
+
 import processing.core.PVector;
+import processing.event.MouseEvent;
 
 public class Frame  {
 
@@ -25,7 +27,11 @@ public class Frame  {
 		layout.onKeyType(key);
 	}
 	
-	public void onMousePress(int mouseBtn) {
-		layout.onMousePress(mouseBtn);
+	public void onMousePress(MouseEvent event) {
+		layout.onMousePress(event);
+	}
+	
+	public void onMouseRelease(MouseEvent event) {
+		layout.onMouseRelease(event);
 	}
 }

@@ -6,7 +6,7 @@ import util.PosSizeTuple;
 
 public abstract class GridLayout extends Layout {
 
-	public boolean keepGridSizesEqual = true;
+	public boolean keepGridSizesEqual = false;
 	private PosSizeTuple[][] posSizeCache = null;
 
 	public abstract GraphicsComponent getComponent(int x, int y);

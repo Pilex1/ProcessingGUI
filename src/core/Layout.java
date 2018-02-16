@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import processing.core.PVector;
+import processing.event.MouseEvent;
 
 //represents a screen/display on which GraphicsComponents can be added
 public abstract class Layout extends GraphicsComponent {
@@ -26,9 +27,16 @@ public abstract class Layout extends GraphicsComponent {
 	}
 	
 	@Override
-	public void onMousePress(int mouseBtn) {
+	public void onMousePress(MouseEvent event) {
 		for (GraphicsComponent g : getAllComponents()) {
-			g.onMousePress(mouseBtn);
+			g.onMousePress(event);
+		}
+	}
+	
+	@Override
+	public void onMouseRelease(MouseEvent event) {
+		for (GraphicsComponent g : getAllComponents()) {
+			g.onMouseRelease(event);
 		}
 	}
 }

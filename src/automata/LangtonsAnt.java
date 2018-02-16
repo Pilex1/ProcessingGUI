@@ -141,7 +141,11 @@ public class LangtonsAnt extends Grid<Integer> {
 			String number = "";
 			int n = 1;
 			int j = i + 1;
-			char c2 = rule.charAt(i);
+			if (j==rule.length()) {
+				moves.add(new Move(c,1));
+				break;
+			}
+			char c2 = rule.charAt(j);
 			while (c2 >= '0' && c <= '9') {
 				number += c2;
 				j++;

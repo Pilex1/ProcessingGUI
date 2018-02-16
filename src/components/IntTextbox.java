@@ -1,16 +1,20 @@
 package components;
 
-public class DigitTextbox extends Textbox {
+public class IntTextbox extends Textbox {
 
 	public boolean allowNegatives = false;
 
-	public DigitTextbox(String text) {
+	public IntTextbox(String text) {
 		super(text);
 	}
 
 	@Override
 	public void append(char c) {
 		String s = getText() + c;
+		if (s.equals("-")) {
+			super.append(c);
+			return;
+		}
 		int i = 0;
 		try {
 			i = Integer.parseInt(s);
@@ -23,6 +27,7 @@ public class DigitTextbox extends Textbox {
 	}
 	
 	public int getValue() {
+		if (getText().equals("-")) return 0;
 		return Integer.parseInt(getText());
 	}
 

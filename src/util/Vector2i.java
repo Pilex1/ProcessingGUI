@@ -21,5 +21,10 @@ public class Vector2i {
 	public Vector2i clone()  {
 		return new Vector2i(x,y);
 	}
+	
+	@Override
+	public int hashCode() {
+		return 9999999*x+y;
+	}
 
 }

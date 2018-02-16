@@ -10,18 +10,22 @@ import processing.core.*;
 
 public class Label extends GraphicsComponent {
 
-	protected Object tag;
-
 	protected PFont font;
-	protected int textSize;
-	protected Color textColor;
-	protected Color currentBackgroundColor;
-	protected Color borderColor = Color.DARK_GRAY;
+	public int textSize;
+	public Color textColor;
+	public Color currentBackgroundColor;
+
+	public Color borderColor = Color.DARK_GRAY;
+	public int borderRadius = 10;
+	public int borderThickness = 2;
+	// controls how much inward the text is rendered at, relative to the edge of the
+	// label
+	public int textBorder = 5;
 
 	protected String text;
 
-	protected int hAlign;
-	protected int vAlign;
+	public int hAlign;
+	public int vAlign;
 
 	public Label(String text) {
 		currentBackgroundColor = new Color(0, 0, 0, 0);
@@ -35,14 +39,6 @@ public class Label extends GraphicsComponent {
 
 		hAlign = PConstants.CENTER;
 		vAlign = PConstants.CENTER;
-	}
-
-	public Object getTag() {
-		return tag;
-	}
-
-	public void setTag(Object tag) {
-		this.tag = tag;
 	}
 
 	public String getText() {
@@ -61,30 +57,6 @@ public class Label extends GraphicsComponent {
 		this.font = font;
 	}
 
-	public void setTextSize(int textSize) {
-		this.textSize = textSize;
-	}
-
-	public void setTextColor(Color textColor) {
-		this.textColor = textColor;
-	}
-
-	public int getHAlign() {
-		return hAlign;
-	}
-
-	public void setHAlign(int hAlign) {
-		this.hAlign = hAlign;
-	}
-
-	public int getVAlign() {
-		return vAlign;
-	}
-
-	public void setVAlign(int vAlign) {
-		this.vAlign = vAlign;
-	}
-
 	@Override
 	protected void onUpdate(PVector pos, PVector size) {
 	}
@@ -99,19 +71,27 @@ public class Label extends GraphicsComponent {
 		P.fill(currentBackgroundColor.getRGB(), currentBackgroundColor.getAlpha());
 		float sizeX = size.x - padding.right - padding.left;
 		float sizeY = size.y - padding.bottom - padding.top;
-		//float strokeWeight = Math.min(sizeX, sizeY)/20;
-		//strokeWeight=Math.min(5, Math.max(1, strokeWeight));
-		P.strokeWeight(2);
+		P.strokeWeight(borderThickness);
 		P.stroke(borderColor.getRGB(), borderColor.getAlpha());
-		P.rect(pos.x + padding.left, pos.y + padding.top, sizeX, sizeY, 15);
+		P.rect(pos.x + padding.left, pos.y + padding.top, sizeX, sizeY, borderRadius);
 	}
 
-	protected void renderText(PVector relPos, PVector relSize) {
+	protected void renderText(PVector pos, PVector size) {
 		P.textAlign(hAlign, vAlign);
 		P.fill(textColor.getRGB(), textColor.getAlpha());
 		P.textFont(font);
 		P.textSize(textSize);
-		P.text(text, relPos.x + padding.left, relPos.y + padding.top, relSize.x - padding.right - padding.left,
-				relSize.y - padding.bottom - padding.top);
+		float x = pos.x + padding.left + textBorder, y = pos.y + padding.top + textBorder;
+		float w = size.x - padding.right - padding.left - 2 * textBorder,
+				h = size.y - padding.bottom - padding.top - 2 * textBorder;
+		P.text(text, x, y, w, h);
+		
+		/*
+		float yc = y;
+		while(yc<y+h) {
+			P.line(x, yc, x+w, yc);
+			yc += P.getGraphics().textLeading;
+		}
+		*/
 	}
 }

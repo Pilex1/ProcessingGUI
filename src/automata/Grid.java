@@ -13,7 +13,7 @@ public abstract class Grid<T> extends Canvas {
 
 	public Color gridColor = Color.BLACK;
 	public int gridLineSize = 0;
-	public float gridSize = 5;
+	public float gridSize = 1;
 	public boolean square = false;
 	public boolean gridWrap = false;
 
@@ -24,12 +24,16 @@ public abstract class Grid<T> extends Canvas {
 	// cleared after each render is complete
 	private HashMap<Vector2i, T> toRender = new HashMap<>();
 
+	// set to true to indicate that on the next render call, we clear the frame
+	private boolean clearNext = false;
+
 	public Grid() {
 	}
-	
+
 	public void clear() {
-		for (int i =0;i<grid.length;i++) {
-			for (int j=0;j<grid[0].length;j++) {
+		clearNext = true;
+		for (int i = 0; i < grid.length; i++) {
+			for (int j = 0; j < grid[i].length; j++) {
 				setCell(i, j, getDefault());
 			}
 		}
@@ -81,7 +85,7 @@ public abstract class Grid<T> extends Canvas {
 		for (Vector2i i : toRender.keySet()) {
 			T t = toRender.get(i);
 			P.stroke(gridColor.getRGB());
-			if (gridLineSize==0) {
+			if (gridLineSize == 0) {
 				P.noStroke();
 			} else {
 				P.strokeWeight(gridLineSize);
@@ -127,26 +131,26 @@ public abstract class Grid<T> extends Canvas {
 		T cell = getCell(v);
 		if (t == null)
 			return false;
+		buffer.beginDraw();
 		if (!t.equals(cell)) {
 			toRender.put(v, t);
-			buffer.beginDraw();
 			buffer.stroke(gridColor.getRGB());
-			if (gridLineSize==0) {
+			if (gridLineSize == 0) {
 				buffer.noStroke();
 			} else {
 				buffer.strokeWeight(gridLineSize);
 			}
 			buffer.fill(getColor(t).getRGB());
 			buffer.rect(v.x * gridSize, v.y * gridSize, gridSize, gridSize);
-			buffer.endDraw();
 			grid[v.x][v.y] = t;
 			requestGraphicalUpdate();
 		}
+		buffer.endDraw();
 		return true;
 	}
 
 	protected boolean setCell(Vector2i v, T t) {
-		return setCell(v.x,v.y,t);
+		return setCell(v.x, v.y, t);
 	}
 
 	protected abstract Color getColor(T t);
@@ -220,7 +224,7 @@ public abstract class Grid<T> extends Canvas {
 			for (int j = 0; j < grid[i].length; j++) {
 				T t = grid[i][j];
 				buffer.stroke(gridColor.getRGB());
-				if (gridLineSize==0) {
+				if (gridLineSize == 0) {
 					buffer.noStroke();
 				} else {
 					buffer.strokeWeight(gridLineSize);

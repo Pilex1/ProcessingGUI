@@ -6,6 +6,7 @@ import java.awt.Color;
 
 import core.IAction;
 import processing.core.*;
+import processing.event.MouseEvent;
 
 public class Textbox extends Button {
 
@@ -59,9 +60,9 @@ public class Textbox extends Button {
 	}
 
 	@Override
-	public void onMousePress(int mouseBtn) {
+	public void onMousePress(MouseEvent event) {
 		if (editing) {
-			if (mouseBtn == PConstants.LEFT) {
+			if (event.getButton() == PConstants.LEFT) {
 				if (rescindNextUnedit) {
 					rescindNextUnedit = false;
 				} else {
@@ -70,7 +71,7 @@ public class Textbox extends Button {
 				requestGraphicalUpdate();
 			}
 		} else {
-			if (mouseBtn == PConstants.LEFT && hoveredOver) {
+			if (event.getButton()== PConstants.LEFT && hoveredOver) {
 				editing = true;
 				requestGraphicalUpdate();
 			}
