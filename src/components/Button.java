@@ -1,12 +1,12 @@
 package components;
 
-import static main.Program.P;
+import static main.Applet.P;
 
 import java.awt.Color;
 
-import core.Fonts;
 import core.IAction;
-import processing.core.*;
+import processing.core.PConstants;
+import processing.core.PVector;
 import processing.event.MouseEvent;
 
 public class Button extends Label {

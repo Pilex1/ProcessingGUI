@@ -33,4 +33,19 @@ public enum Direction {
 			return null;
 		}
 	}
+
+	public Direction opposite() {
+		switch (this) {
+		case NORTH:
+			return Direction.SOUTH;
+		case EAST:
+			return Direction.WEST;
+		case SOUTH:
+			return Direction.NORTH;
+		case WEST:
+			return Direction.EAST;
+		default:
+			return null;
+		}
+	}
 }

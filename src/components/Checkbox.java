@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import core.GraphicsComponent;
 import processing.core.PVector;
-import static main.Program.P;
+import static main.Applet.P;
 
 public class Checkbox extends GraphicsComponent {
 	

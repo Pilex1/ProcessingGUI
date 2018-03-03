@@ -1,37 +1,37 @@
 package core;
 
-import static main.Program.P;
+import static main.Applet.P;
 
 import processing.core.PVector;
 import processing.event.MouseEvent;
 
 public class Frame  {
 
-	public Layout layout;
+	public GraphicsComponent mainComponent;
 
-	public Frame(Layout layout) {
-		this.layout = layout;
-		layout.setMinSize(new PVector(P.WIDTH,P.HEIGHT));
-		layout.setMaxSize(new PVector(P.WIDTH,P.HEIGHT));
+	public Frame(GraphicsComponent layout) {
+		this.mainComponent = layout;
+		layout.setMinSize(new PVector(P.width,P.height));
+		layout.setMaxSize(new PVector(P.width,P.height));
 	}
 
 	public void update() {
-		layout.update(new PVector(), new PVector(P.width, P.height));
+		mainComponent.update(new PVector(), new PVector(P.width, P.height));
 	}
 
 	public void render() {
-		layout.render(new PVector(), new PVector(P.width, P.height));
+		mainComponent.render(new PVector(), new PVector(P.width, P.height));
 	}
 
 	public void onKeyType(char key) {
-		layout.onKeyType(key);
+		mainComponent.onKeyType(key);
 	}
 	
 	public void onMousePress(MouseEvent event) {
-		layout.onMousePress(event);
+		mainComponent.onMousePress(event);
 	}
 	
 	public void onMouseRelease(MouseEvent event) {
-		layout.onMouseRelease(event);
+		mainComponent.onMouseRelease(event);
 	}
 }

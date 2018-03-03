@@ -1,7 +1,5 @@
 package components;
 
-import static main.Program.*;
-
 import java.awt.Color;
 
 import core.IAction;

@@ -5,9 +5,8 @@ import java.util.HashMap;
 
 import core.Canvas;
 
-import static main.Program.P;
+import static main.Applet.P;
 
-import processing.core.PGraphics;
 import processing.core.PVector;
 import util.Vector2i;
 
@@ -29,7 +28,27 @@ public abstract class Grid<T> extends Canvas {
 	// set to true to indicate that on the next render call, we clear the frame
 	private boolean clearNext = false;
 
-	public Grid() {
+	public Grid(int width, int height) {
+		super(width, height);
+		initialiseGrid();
+	}
+	
+	private void initialiseGrid() {
+		int x = (int) (getWidth() / gridSize);
+		if (x % 2 == 0)
+			x--;
+		int y = (int) (getHeight() / gridSize);
+		if (y % 2 == 0)
+			y--;
+		if (square) {
+			x = y = Math.min(x, y);
+		}
+		grid = (T[][]) new Object[x][y];
+		for (int i = 0; i < x; i++) {
+			for (int j = 0; j < y; j++) {
+				grid[i][j] = getDefault();
+			}
+		}
 	}
 
 	public float getGridSize() {
@@ -40,6 +59,7 @@ public abstract class Grid<T> extends Canvas {
 		if (gridSize == this.gridSize)
 			return;
 		this.gridSize = gridSize;
+		initialiseGrid();
 		requestPositionalUpdate();
 	}
 
@@ -68,39 +88,16 @@ public abstract class Grid<T> extends Canvas {
 
 	@Override
 	protected void onUpdate(PVector pos, PVector size) {
-		if (grid == null) {
-			int x = (int) ((size.x - resizeIncr) / gridSize);
-			if (x % 2 == 0)
-				x--;
-			int y = (int) ((size.y - resizeIncr) / gridSize);
-			if (y % 2 == 0)
-				y--;
-			grid = (T[][]) new Object[x][y];
-			for (int i = 0; i < x; i++) {
-				for (int j = 0; j < y; j++) {
-					grid[i][j] = getDefault();
-				}
-			}
-			if (square) {
-				x = y = Math.min(x, y);
-			}
-		}
 		if (clearNext) {
-			buffer.beginDraw();
-			buffer.clear();
-			float x = pos.x + (size.x - buffer.width) / 2;
-			float y = pos.x + (size.y - buffer.height) / 2;
 			for (int i = 0; i < grid.length; i++) {
 				for (int j = 0; j < grid[i].length; j++) {
 					grid[i][j] = getDefault();
-					drawToGraphics(P.getGraphics(), i, j, grid[i][j]);
 				}
 			}
-			buffer.endDraw();
 		}
 	}
 
-	private void drawToGraphics(PGraphics g, int x, int y, T t) {
+	private void drawToGraphics(int x, int y, T t) {
 		buffer.stroke(gridColor.getRGB());
 		if (gridLineSize == 0) {
 			buffer.noStroke();
@@ -114,8 +111,16 @@ public abstract class Grid<T> extends Canvas {
 	@Override
 	protected void onRender(PVector pos, PVector size) {
 		if (clearNext) {
+			buffer.beginDraw();
+			for (int i =0;i < grid.length;i++) {
+				for (int j =0;j<grid[0].length;j++) {
+					drawToGraphics(i,j,getDefault());
+				}
+			}
+			
 			renderBuffer(pos, size);
 			clearNext = false;
+			buffer.endDraw();
 			return;
 		}
 		float x = pos.x + (size.x - buffer.width) / 2;
@@ -174,14 +179,12 @@ public abstract class Grid<T> extends Canvas {
 		T cell = getCell(v);
 		if (t == null)
 			return false;
-		buffer.beginDraw();
 		if (!t.equals(cell)) {
 			toRender.put(v, t);
 			grid[v.x][v.y] = t;
-			drawToGraphics(buffer, v.x, v.y, t);
+			drawToGraphics(v.x, v.y, t);
 			requestGraphicalUpdate();
 		}
-		buffer.endDraw();
 		return true;
 	}
 
@@ -190,77 +193,4 @@ public abstract class Grid<T> extends Canvas {
 	}
 
 	protected abstract Color getColor(T t);
-
-	@Override
-	protected void onResize(float width, float height) {
-		int x = (int) ((width - resizeIncr) / gridSize);
-		if (x % 2 == 0)
-			x--;
-		int y = (int) ((height - resizeIncr) / gridSize);
-		if (y % 2 == 0)
-			y--;
-		if (square) {
-			x = y = Math.min(x, y);
-		}
-
-		// see
-		// https://stackoverflow.com/questions/2927391/whats-the-reason-i-cant-create-generic-array-types-in-java
-		T[][] newGrid = (T[][]) new Object[x][y];
-
-		if (grid != null) {
-			if (x < getGridX()) {
-				int removedX = getGridX() - x;
-				for (int i = 0; i < x; i++) {
-					if (y < getGridY()) {
-						// shrinking x, shrinking y
-						int removedY = getGridY() - y;
-						for (int j = 0; j < y; j++) {
-							newGrid[i][j] = grid[i + removedX / 2][j + removedY / 2];
-						}
-					} else {
-						// shrinking x, growing y
-						int extraY = y - getGridY();
-						for (int j = 0; j < getGridY(); j++) {
-							newGrid[i][j + extraY / 2] = grid[i + removedX / 2][j];
-						}
-					}
-				}
-			} else {
-				int extraX = x - getGridX();
-				for (int i = 0; i < getGridX(); i++) {
-					if (y < getGridY()) {
-						// growing x, shrinking y
-						int removedY = getGridY() - y;
-						for (int j = 0; j < y; j++) {
-							newGrid[i + extraX / 2][j] = grid[i][j + removedY / 2];
-						}
-					} else {
-						// growing x, growing y
-						int extraY = y - getGridY();
-						for (int j = 0; j < getGridY(); j++) {
-							newGrid[i + extraX / 2][j + extraY / 2] = grid[i][j];
-						}
-					}
-				}
-			}
-		}
-
-		for (int i = 0; i < newGrid.length; i++) {
-			for (int j = 0; j < newGrid[i].length; j++) {
-				if (newGrid[i][j] == null) {
-					newGrid[i][j] = getDefault();
-				}
-			}
-		}
-
-		grid = newGrid;
-		buffer = P.createGraphics((int) (x * gridSize) + 1, (int) (y * gridSize) + 1);
-		buffer.beginDraw();
-		for (int i = 0; i < grid.length; i++) {
-			for (int j = 0; j < grid[i].length; j++) {
-				drawToGraphics(buffer, i, j, grid[i][j]);
-			}
-		}
-		buffer.endDraw();
-	}
 }

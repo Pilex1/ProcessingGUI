@@ -4,16 +4,17 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import processing.core.PVector;
-import util.Vector2i;
 
 public class LangtonsAnt extends Grid<Integer> {
 
+	public boolean pause = true;
+
 	private ArrayList<Ant> ants = new ArrayList<>();
 	private ArrayList<Ant> antsToBeRemoved = new ArrayList<>();
-	private Move[] rule;
+	private char[] rule;
 
-	public Color[] colors = new Color[] { new Color(0xFFFFFF), new Color(0x96858F), new Color(0x6D7993), new Color(0x9099A2),
-			new Color(0x062F4F), new Color(0x813772), new Color(0xCAEBF2), new Color(0xC09F80) };
+	public Color[] colors = new Color[] { new Color(0xFFFFFF), new Color(0x96858F), new Color(0x6D7993),
+			new Color(0x9099A2), new Color(0x062F4F), new Color(0x813772), new Color(0xCAEBF2), new Color(0xC09F80) };
 
 	// speed of -2 = 1 update per 4 frames
 	// speed of -1 = 1 update per 2 frames
@@ -24,97 +25,187 @@ public class LangtonsAnt extends Grid<Integer> {
 	public int speed = 4;
 	private int frameCount = 0;
 
-	public LangtonsAnt(String rule) {
+	public LangtonsAnt(int width, int height, String rule) {
+		super(width, height);
 		setRule(rule);
+		
+		buffer.beginDraw();
+		for (int i = (int)(1.0/3*getGridX()); i <(int)(2.0/3*getGridX()); i++) {
+			for (int j = 0; j  < getGridY();j++) {
+				setCell(i, j, 1);
+			}
+		}
+		buffer.endDraw();
 	}
 
-	public LangtonsAnt() {
-		this("RL");
+	public LangtonsAnt(int width, int height) {
+		this(width, height, "RL");
 	}
 
 	@Override
 	protected void onUpdate(PVector pos, PVector size) {
 		super.onUpdate(pos, size);
+		if (pause)
+			return;
+		buffer.beginDraw();
 		frameCount++;
 		if (speed <= 0) {
 			if (frameCount % (int) Math.pow(2, -speed) == 0) {
-				for (Ant ant : ants) {
-					ant.move();
-				}
+				step();
 			}
 		} else {
 			for (int i = 0; i < Math.pow(2, speed); i++) {
-				for (Ant ant : ants) {
-					ant.move();
-				}
+				step();
 			}
 		}
 		ants.removeAll(antsToBeRemoved);
+		buffer.endDraw();
 	}
 
-	private class Move {
-		char action;
-		int amount;
+	public void invertAnts() {
+		ArrayList<Ant> newAnts = new ArrayList<>();
+		for (Ant ant : ants) {
+			InverseAnt inverse = new InverseAnt(ant);
+			newAnts.add(inverse);
+		}
+		ants = newAnts;
+	}
 
-		Move(char action, int amount) {
-			this.action = action;
-			this.amount = amount;
+	public void step() {
+		for (Ant ant : ants) {
+			ant.move();
 		}
 	}
 
 	private class Ant {
 		int x, y;
-		Direction dir = Direction.NORTH;
+		Direction dir;
 
 		Ant(int x, int y) {
+			this(x, y, Direction.NORTH);
+		}
+
+		Ant(int x, int y, Direction dir) {
 			this.x = x;
 			this.y = y;
+			this.dir = dir;
 		}
 
 		void move() {
+
+			// rotate based on color of current cell
+			// changes the color of current cell
+			// moves in the new direction
+
 			Integer state = getCell(x, y);
 			if (state == null) {
 				// the ant has reached the edge of the grid, so destroy the ant
 				antsToBeRemoved.add(this);
 				return;
 			}
-			Move move = rule[state];
-			if (move.action == 'N') {
+
+			char move = rule[state];
+			if (move == 'N') {
 				dir = Direction.NORTH;
-			} else if (move.action == 'E') {
+			} else if (move == 'E') {
 				dir = Direction.EAST;
-			} else if (move.action == 'S') {
+			} else if (move == 'S') {
 				dir = Direction.SOUTH;
-			} else if (move.action == 'W') {
+			} else if (move == 'W') {
 				dir = Direction.WEST;
-			} else if (move.action == 'L') {
+			} else if (move == 'L') {
 				dir = dir.turnLeft();
-			} else if (move.action == 'R') {
+			} else if (move == 'R') {
 				dir = dir.turnRight();
 			}
 
-			for (int i = 0; i < move.amount; i++) {
-				int newState = (getCell(x, y) + 1) % getStates();
-				// note this is not quite how it is implemented in original!!!
-				// by original i mean the one i made in 2015/2016
-				setCell(x, y, newState);
-				switch (dir) {
-				case NORTH:
-					y--;
-					break;
-				case EAST:
-					x++;
-					break;
-				case SOUTH:
-					y++;
-					break;
-				case WEST:
-					x--;
-					break;
-				}
+			int newState = (getCell(x, y) + 1) % getStates();
+			setCell(x, y, newState);
+
+			switch (dir) {
+			case NORTH:
+				y--;
+				break;
+			case EAST:
+				x++;
+				break;
+			case SOUTH:
+				y++;
+				break;
+			case WEST:
+				x--;
+				break;
 			}
 
 		}
+	}
+
+	private class InverseAnt extends Ant {
+
+		InverseAnt(int x, int y, Direction dir) {
+			super(x, y);
+			this.dir = dir;
+			switch (dir) {
+			case NORTH:
+				this.y--;
+				break;
+			case EAST:
+				this.x++;
+				break;
+			case SOUTH:
+				this.y++;
+				break;
+			case WEST:
+				this.x--;
+				break;
+			}
+		}
+
+		InverseAnt(Ant ant) {
+			this(ant.x, ant.y, ant.dir.opposite());
+		}
+
+		@Override
+		void move() {
+
+			// invert the color of current cell
+			//
+
+			setCell(x, y, (getCell(x, y) - 1 + getStates()) % getStates());
+
+			Integer state = getCell(x, y);
+			char move = rule[state];
+			if (move == 'N') {
+				dir = Direction.NORTH;
+			} else if (move == 'E') {
+				dir = Direction.EAST;
+			} else if (move == 'S') {
+				dir = Direction.SOUTH;
+			} else if (move == 'W') {
+				dir = Direction.WEST;
+			} else if (move == 'L') {
+				dir = dir.turnRight();
+			} else if (move == 'R') {
+				dir = dir.turnLeft();
+			}
+
+			switch (dir) {
+			case NORTH:
+				y--;
+				break;
+			case EAST:
+				x++;
+				break;
+			case SOUTH:
+				y++;
+				break;
+			case WEST:
+				x--;
+				break;
+			}
+
+		}
+
 	}
 
 	// how many states a cell can be on
@@ -125,79 +216,40 @@ public class LangtonsAnt extends Grid<Integer> {
 	}
 
 	public boolean isRuleValid(String rule) {
-		Move[] ruleCopy = this.rule;
-		boolean valid = setRule(rule);
-		this.rule = ruleCopy;
-		return valid;
+		for (int i = 0; i < rule.length(); i++) {
+			char c = rule.charAt(i);
+			if (!(c == 'N' || c == 'E' || c == 'S' || c == 'W' || c == 'L' || c == 'R')) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void setRule(int x) {
 		String s = Integer.toBinaryString(x);
-		rule = new Move[s.length()];
+		rule = new char[s.length()];
 		for (int i = 0; i < s.length(); i++) {
-			rule[i] = (s.charAt(i) == '0') ? new Move('L', 1) : new Move('R', 1);
+			rule[i] = (s.charAt(i) == '0') ? 'L' : 'R';
 		}
 	}
 
 	// returns whether the rule has been successfully set
 	// if this returns false, then the rule is not valid
-	public boolean setRule(String rule) {
-		try {
-			int x = Integer.parseInt(rule);
-			setRule(x);
-			return true;
-		} catch (NumberFormatException e) {
-			
-		}
-		ArrayList<Move> moves = new ArrayList<>();
-		for (int i = 0; i < rule.length();) {
-			char c = rule.charAt(i);
-			if (!(c == 'N' || c == 'E' || c == 'S' || c == 'W' || c == 'L' || c == 'R')) {
-				System.err.println("Invalid rule: " + rule);
-				return false;
-			}
-			String number = "";
-			int n = 1;
-			int j = i + 1;
-
-			while (j < rule.length() && Character.isDigit(rule.charAt(j))) {
-				number += rule.charAt(j);
-				j++;
-			}
-			if (j == rule.length() && number.equals("")) {
-				moves.add(new Move(c, 1));
-				break;
-			}
-
-			try {
-				if (number.equals("")) {
-					n = 1;
-				} else {
-					n = Integer.parseInt(number);
-				}
-			} catch (NumberFormatException e) {
-				System.err.println("Invalid rule: " + rule);
-				return false;
-			}
-			moves.add(new Move(c, n));
-			if (i == rule.length() - 1)
-				break;
-			i = j;
-
-		}
-		this.rule = moves.toArray(new Move[0]);
-		return true;
+	public void setRule(String rule) {
+		if (!isRuleValid(rule))
+			return;
+		this.rule = rule.toCharArray();
 	}
 
 	public void addAnt(int x, int y) {
 		ants.add(new Ant(x, y));
 	}
-	
+
 	/**
 	 * Adds an ant to the center of the grid
 	 */
 	public void addAnt() {
-		addAnt(getCenterX(),getCenterY());
+		addAnt(getCenterX(), getCenterY());
 	}
 
 	public void removeLastAnt() {

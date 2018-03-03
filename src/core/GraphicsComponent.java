@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import processing.core.*;
 import processing.event.MouseEvent;
 import util.EdgeTuple;
-import static main.Program.P;
+import static main.Applet.P;
 
 // all graphical elements extend this class
 public abstract class GraphicsComponent {
@@ -147,32 +147,40 @@ public abstract class GraphicsComponent {
 			onUpdate(pos, size);
 		}
 	}
+	
+	private void renderComponent(PVector pos, PVector size) {
+		if (requireGraphicalUpdate && this instanceof Layout) {
+			P.strokeWeight(0);
+			Color backgroundColor = ((Layout) this).backgroundColor;
+			P.fill(backgroundColor.getRGB());
+			P.rect(pos.x, pos.y, size.x, size.y);
+		}
+
+		// children are rendered when the parent layout is rendered
+		// if the parent layout is not rendered, then any graphical updates
+		// in the child layout will not be carried out
+		if (requireGraphicalUpdate || this instanceof Layout) {
+
+			if (this instanceof Canvas && requirePositionalUpdate) {
+				((Canvas) this).renderBuffer(pos, size);
+			} else {
+				onRender(pos, size);
+
+			}
+		}
+		requireGraphicalUpdate = false;
+		requirePositionalUpdate = false;
+	}
 
 	public final void render(PVector pos, PVector size) {
 		if (!disabled) {
-
-			if (requireGraphicalUpdate && this instanceof Layout) {
-				P.strokeWeight(0);
-				Color backgroundColor = ((Layout) this).backgroundColor;
-				P.fill(backgroundColor.getRGB());
-				P.rect(pos.x, pos.y, size.x, size.y);
+			if (this instanceof GameCanvas) {
+				this.onRender(pos, size);
+			} else {
+				renderComponent(pos, size);
 			}
 
-			// children are rendered when the parent layout is rendered
-			// if the parent layout is not rendered, then any graphical updates
-			// in the child layout will not be carried out
-			if (requireGraphicalUpdate || this instanceof Layout) {
-
-				if (this instanceof Canvas && requirePositionalUpdate) {
-					((Canvas) this).resize((int) size.x, (int) size.y);
-					((Canvas) this).renderBuffer(pos, size);
-				} else {
-					onRender(pos, size);
-
-				}
-			}
-			requireGraphicalUpdate = false;
-			requirePositionalUpdate = false;
+		
 		}
 	}
 

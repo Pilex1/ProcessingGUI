@@ -2,8 +2,6 @@ package core;
 
 import java.util.ArrayList;
 
-import processing.core.PVector;
-
 public class StaticGridLayout extends GridLayout {
 
 	private int x, y;

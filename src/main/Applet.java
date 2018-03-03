@@ -2,7 +2,6 @@ package main;
 
 import java.util.Random;
 
-import automata.BlankCanvas;
 import automata.LangtonsAnt;
 import automata.RandomCells;
 import components.Button;
@@ -12,25 +11,29 @@ import components.Textbox;
 import core.*;
 import processing.core.*;
 import processing.event.MouseEvent;
+import util.Color;
 
-public class Program extends PApplet {
+public class Applet extends PApplet {
 
-	public static Program P;
-
-	public final int WIDTH = 1280;
-	public final int HEIGHT = 720;
 	public boolean[] keys;
+	public boolean keyEnter;
 	public boolean keyEscape;
 	public boolean keyBackspace;
+	public boolean keyLeft;
+	public boolean keyRight;
+	public boolean keyUp;
+	public boolean keyDown;
 	public Frame frame;
-
 	public Random R = new Random();
+
+	public static Applet P;
 
 	@Override
 	public void settings() {
+		size(1280, 720);
 		P = this;
-		size(WIDTH, HEIGHT);
-
+		Color.Init();
+		// fullScreen();
 	}
 
 	private Layout sample1() {
@@ -65,7 +68,7 @@ public class Program extends PApplet {
 		StaticGridLayout layout = new StaticGridLayout(2, 1);
 		layout.keepGridSizesEqual = false;
 		{
-			RandomCells r = new RandomCells();
+			RandomCells r = new RandomCells(P.width - 200, P.height);
 			layout.addComponent(r);
 		}
 		{
@@ -76,7 +79,6 @@ public class Program extends PApplet {
 			}), 0, 1);
 			inner.addComponent(new Button("Test 3", () -> {
 			}), 0, 2);
-			inner.setMaxWidth(200);
 			layout.addComponent(inner);
 		}
 		return layout;
@@ -85,14 +87,18 @@ public class Program extends PApplet {
 	private Layout langton() {
 		StaticGridLayout layout = new StaticGridLayout(2, 1);
 		{
-			LangtonsAnt l = new LangtonsAnt();
+			LangtonsAnt l = new LangtonsAnt(P.width-400,P.height);
 			l.square = true;
 			l.gridWrap = true;
+			l.addAnt();
 			layout.addComponent(l);
 
-			StaticGridLayout gui = new StaticGridLayout(1, 9);
+			StaticGridLayout gui = new StaticGridLayout(1, 12);
 			gui.addComponent(new Button("Spawn ant in middle", () -> {
 				l.addAnt();
+			}));
+			gui.addComponent(new Button("Invert all ants", ()->{
+				l.invertAnts();
 			}));
 			gui.addComponent(new Button("Clear world", () -> {
 				l.clear();
@@ -100,6 +106,13 @@ public class Program extends PApplet {
 			}));
 			gui.addComponent(new Button("Destroy all ants", () -> {
 				l.removeAllAnts();
+			}));
+			gui.addComponent(new Button("Step",()->{
+				l.step();
+				l.pause=true;
+			}));
+			gui.addComponent(new Button("Stop/Start",()->{
+				l.pause=!l.pause;
 			}));
 
 			Label lbl_rule = new Label("Rule: LR");
@@ -123,19 +136,19 @@ public class Program extends PApplet {
 				l.speed = t_speed.getValue();
 			};
 			gui.addComponent(t_speed);
-			
+
 			gui.addComponent(new Label("Grid size"));
-			IntTextbox t_size = new IntTextbox("2");
-			t_size.onKeyEnter=()->{
+			IntTextbox t_size = new IntTextbox("6");
+			t_size.onKeyEnter = () -> {
 				l.setGridSize(t_size.getValue());
 			};
 			gui.addComponent(t_size);
-			
-			gui.setMaxWidth(200);
+
 			layout.addComponent(gui);
 
 			l.setRule(t_rule.getText());
 			l.speed = t_speed.getValue();
+			l.setGridSize(t_size.getValue());
 		}
 		return layout;
 	}
@@ -170,6 +183,7 @@ public class Program extends PApplet {
 
 	@Override
 	public void keyPressed() {
+		key = Character.toLowerCase(key);
 		if (key >= 0 && key <= 255) {
 			keys[key] = true;
 		}
@@ -177,9 +191,18 @@ public class Program extends PApplet {
 			keyEscape = true;
 			key = 0;
 		}
-		if (keyCode == BACKSPACE) {
+		if (keyCode == BACKSPACE)
 			keyBackspace = true;
-		}
+		if (keyCode == UP)
+			keyUp = true;
+		if (keyCode == DOWN)
+			keyDown = true;
+		if (keyCode == LEFT)
+			keyLeft = true;
+		if (keyCode == RIGHT)
+			keyRight = true;
+		if (keyCode == ENTER)
+			keyEnter = true;
 	}
 
 	@Override
@@ -193,10 +216,16 @@ public class Program extends PApplet {
 		if (keyCode == BACKSPACE) {
 			keyBackspace = false;
 		}
-	}
-
-	public static void main(String[] args) {
-		PApplet.main("main.Program");
+		if (keyCode == UP)
+			keyUp = false;
+		if (keyCode == DOWN)
+			keyDown = false;
+		if (keyCode == LEFT)
+			keyLeft = false;
+		if (keyCode == RIGHT)
+			keyRight = false;
+		if (keyCode == ENTER)
+			keyEnter = false;
 	}
 
 }

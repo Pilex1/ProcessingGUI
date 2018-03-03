@@ -1,9 +1,6 @@
 package core;
 
-import java.awt.Graphics;
 import java.util.ArrayList;
-
-import processing.core.PVector;
 
 // a gridlayout that dynamically changes size depending on the number of elements
 public class DynamicGridLayout extends GridLayout {

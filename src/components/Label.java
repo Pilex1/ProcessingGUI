@@ -1,6 +1,6 @@
 package components;
 
-import static main.Program.*;
+import static main.Applet.*;
 
 import java.awt.Color;
 
@@ -30,7 +30,7 @@ public class Label extends GraphicsComponent {
 	public Label(String text) {
 		currentBackgroundColor = new Color(0, 0, 0, 0);
 
-		font = Fonts.FreeSans;
+		font = Fonts.LatoLight;
 		textSize = 18;
 		textColor = Color.BLACK;
 		currentBackgroundColor = Color.LIGHT_GRAY;

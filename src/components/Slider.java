@@ -1,7 +1,7 @@
 package components;
 
 import java.awt.Color;
-import static main.Program.P;
+import static main.Applet.P;
 import core.GraphicsComponent;
 import processing.core.PVector;
 

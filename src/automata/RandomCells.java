@@ -1,14 +1,14 @@
 package automata;
 
 import java.awt.Color;
-import static main.Program.P;
+import static main.Applet.P;
 
 import processing.core.PVector;
 
 public class RandomCells extends Grid<Boolean> {
 
-	public RandomCells() {
-		super();
+	public RandomCells(int width, int height) {
+		super(width, height);
 	}
 
 	@Override
