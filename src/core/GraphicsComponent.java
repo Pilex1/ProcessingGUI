@@ -147,7 +147,7 @@ public abstract class GraphicsComponent {
 			onUpdate(pos, size);
 		}
 	}
-	
+
 	private void renderComponent(PVector pos, PVector size) {
 		if (requireGraphicalUpdate && this instanceof Layout) {
 			P.strokeWeight(0);
@@ -160,13 +160,7 @@ public abstract class GraphicsComponent {
 		// if the parent layout is not rendered, then any graphical updates
 		// in the child layout will not be carried out
 		if (requireGraphicalUpdate || this instanceof Layout) {
-
-			if (this instanceof Canvas && requirePositionalUpdate) {
-				((Canvas) this).renderBuffer(pos, size);
-			} else {
-				onRender(pos, size);
-
-			}
+			onRender(pos, size);
 		}
 		requireGraphicalUpdate = false;
 		requirePositionalUpdate = false;
@@ -180,7 +174,6 @@ public abstract class GraphicsComponent {
 				renderComponent(pos, size);
 			}
 
-		
 		}
 	}
 

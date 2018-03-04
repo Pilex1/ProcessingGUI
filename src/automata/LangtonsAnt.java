@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import processing.core.PVector;
+import static main.Applet.P;
 
 public class LangtonsAnt extends Grid<Integer> {
 
@@ -28,11 +29,11 @@ public class LangtonsAnt extends Grid<Integer> {
 	public LangtonsAnt(int width, int height, String rule) {
 		super(width, height);
 		setRule(rule);
-		
+
 		buffer.beginDraw();
-		for (int i = (int)(1.0/3*getGridX()); i <(int)(2.0/3*getGridX()); i++) {
-			for (int j = 0; j  < getGridY();j++) {
-				setCell(i, j, 1);
+		for (int i = (int) (1.0 / 3 * getGridX()); i < (int) (2.0 / 3 * getGridX()); i++) {
+			for (int j = 0; j < getGridY(); j++) {
+				 setCell(i, j, 1);
 			}
 		}
 		buffer.endDraw();
@@ -62,11 +63,29 @@ public class LangtonsAnt extends Grid<Integer> {
 		buffer.endDraw();
 	}
 
+	@Override
+	protected void onRender(PVector pos, PVector size) {
+		super.onRender(pos, size);
+		float x = pos.x + (size.x - getWidth()) / 2;
+		float y = pos.y + (size.y - getHeight()) / 2;
+		for (Ant ant : ants) {
+			P.noStroke();
+			P.fill(255, 0, 0);
+			P.rect(x + ant.x * getGridSize(), y + ant.y * getGridSize(), getGridSize(), getGridSize());
+		}
+	}
+
 	public void invertAnts() {
 		ArrayList<Ant> newAnts = new ArrayList<>();
 		for (Ant ant : ants) {
-			InverseAnt inverse = new InverseAnt(ant);
-			newAnts.add(inverse);
+			if (ant instanceof InverseAnt) {
+				Ant newAnt = new Ant((InverseAnt) ant);
+				newAnts.add(newAnt);
+			} else {
+				InverseAnt inverse = new InverseAnt(ant);
+				newAnts.add(inverse);
+			}
+
 		}
 		ants = newAnts;
 	}
@@ -89,6 +108,24 @@ public class LangtonsAnt extends Grid<Integer> {
 			this.x = x;
 			this.y = y;
 			this.dir = dir;
+		}
+
+		Ant(InverseAnt ant) {
+			this(ant.x, ant.y, ant.dir.opposite());
+			switch (dir) {
+			case NORTH:
+				this.y--;
+				break;
+			case EAST:
+				this.x++;
+				break;
+			case SOUTH:
+				this.y++;
+				break;
+			case WEST:
+				this.x--;
+				break;
+			}
 		}
 
 		void move() {

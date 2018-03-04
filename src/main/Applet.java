@@ -90,7 +90,6 @@ public class Applet extends PApplet {
 			LangtonsAnt l = new LangtonsAnt(P.width-400,P.height);
 			l.square = true;
 			l.gridWrap = true;
-			l.addAnt();
 			layout.addComponent(l);
 
 			StaticGridLayout gui = new StaticGridLayout(1, 12);
@@ -149,6 +148,8 @@ public class Applet extends PApplet {
 			l.setRule(t_rule.getText());
 			l.speed = t_speed.getValue();
 			l.setGridSize(t_size.getValue());
+			
+			l.addAnt();
 		}
 		return layout;
 	}

@@ -23,6 +23,9 @@ public abstract class Canvas extends GraphicsComponent {
 
 	public Canvas(int width, int height) {
 		buffer = P.createGraphics(width, height);
+		buffer.beginDraw();
+		buffer.background(255);
+		buffer.endDraw();
 		graphics = buffer;
 		setMinSize(width, height);
 		setMaxSize(width, height);
