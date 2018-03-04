@@ -1,6 +1,5 @@
 package automata;
 
-import java.awt.Color;
 import java.util.HashMap;
 
 import core.Canvas;
@@ -9,11 +8,11 @@ import static main.Applet.P;
 
 import processing.core.PGraphics;
 import processing.core.PVector;
+import util.Color;
 import util.Vector2i;
 
 public abstract class Grid<T> extends Canvas {
 
-	public Color gridColor = Color.BLACK;
 	private float gridSize = 2;
 	public boolean square = false;
 	public boolean gridWrap = false;
@@ -22,10 +21,10 @@ public abstract class Grid<T> extends Canvas {
 
 	public Grid(int width, int height) {
 		super(width, height);
-		initialiseGrid();
+		initialiseToNull();
 	}
 
-	private void initialiseGrid() {
+	protected void initialiseToNull() {
 		int x = (int) (getWidth() / gridSize);
 		if (x % 2 == 0)
 			x--;
@@ -38,7 +37,17 @@ public abstract class Grid<T> extends Canvas {
 		grid = (T[][]) new Object[x][y];
 		for (int i = 0; i < x; i++) {
 			for (int j = 0; j < y; j++) {
-				grid[i][j] = getDefault();
+				setCell(i, j, null);
+			}
+		}
+		setBufferSize((int) (x * gridSize), (int) (y * gridSize));
+		requestGraphicalUpdate();
+	}
+
+	protected void setToDefaults() {
+		for (int i = 0; i < getGridX(); i++) {
+			for (int j = 0; j < getGridY(); j++) {
+				setCell(i, j, getDefault(i, j));
 			}
 		}
 		requestGraphicalUpdate();
@@ -48,21 +57,20 @@ public abstract class Grid<T> extends Canvas {
 		return gridSize;
 	}
 
+	protected abstract void onGridSizeChange();
+
 	public void setGridSize(float gridSize) {
 		if (gridSize == this.gridSize)
 			return;
 		this.gridSize = gridSize;
-		initialiseGrid();
+		initialiseToNull();
+		onGridSizeChange();
+		setToDefaults();
 	}
 
 	public void clear() {
-		buffer.beginDraw();
-		for (int i = 0; i < grid.length; i++) {
-			for (int j = 0; j < grid[i].length; j++) {
-				setCell(i, j, getDefault());
-			}
-		}
-		buffer.endDraw();
+		initialiseToNull();
+		setToDefaults();
 	}
 
 	public int getCenterX() {
@@ -81,16 +89,16 @@ public abstract class Grid<T> extends Canvas {
 		return grid[0].length;
 	}
 
-	protected abstract T getDefault();
+	protected abstract T getDefault(int x, int y);
 
 	@Override
 	protected void onUpdate(PVector pos, PVector size) {
 	}
 
 	private void drawToGraphics(int x, int y, T t) {
-		buffer.noStroke();
-		buffer.fill(getColor(t).getRGB());
-		buffer.rect(x * gridSize, y * gridSize, gridSize, gridSize);
+		noStroke();
+		fill(getColor(t));
+		rect(x * gridSize, y * gridSize, gridSize, gridSize);
 	}
 
 	@Override
@@ -99,50 +107,23 @@ public abstract class Grid<T> extends Canvas {
 	}
 
 	public T getCell(int x, int y) {
-		Vector2i v = getNormalisedCoords(x, y);
-		if (v.x < 0 || v.x >= grid.length || v.y < 0 || v.y >= grid[0].length)
-			return null;
-		return grid[v.x][v.y];
+		return grid[x][y];
 	}
 
 	public T getCell(Vector2i v) {
 		return getCell(v.x, v.y);
 	}
 
-	protected Vector2i getNormalisedCoords(Vector2i v) {
-		return getNormalisedCoords(v.x, v.y);
-	}
-
-	// e.g. [-1, -1] -> [grid.length-1, grid[0].length-1]
-	protected Vector2i getNormalisedCoords(int x, int y) {
-		if (gridWrap) {
-			while (x >= grid.length)
-				x -= grid.length;
-			while (x < 0)
-				x += grid.length;
-			while (y >= grid[0].length)
-				y -= grid.length;
-			while (y < 0)
-				y += grid.length;
-		}
-		return new Vector2i(x, y);
-	}
-
-	protected boolean setCell(int x, int y, T t) {
-		Vector2i v = getNormalisedCoords(x, y);
-		T cell = getCell(v);
+	protected void setCell(int x, int y, T t) {
 		if (t == null)
-			return false;
-		if (!t.equals(cell)) {
-			grid[v.x][v.y] = t;
-			drawToGraphics(v.x, v.y, t);
-			requestGraphicalUpdate();
-		}
-		return true;
+			return;
+		grid[x][y] = t;
+		drawToGraphics(x, y, t);
+		requestGraphicalUpdate();
 	}
 
-	protected boolean setCell(Vector2i v, T t) {
-		return setCell(v.x, v.y, t);
+	protected void setCell(Vector2i v, T t) {
+		setCell(v.x, v.y, t);
 	}
 
 	protected abstract Color getColor(T t);

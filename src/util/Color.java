@@ -73,8 +73,8 @@ public class Color implements Serializable {
 		this(r, g, b, 255);
 	}
 
-	public Color(int grey) {
-		this(grey, grey, grey);
+	public Color(int hex) {
+		this((hex & 0xFF0000) >> 16, (hex & 0xFF00) >> 8, (hex & 0xFF));
 	}
 
 	public Color Transparent() {
@@ -83,6 +83,10 @@ public class Color implements Serializable {
 
 	public Color copy() {
 		return new Color(r, g, b, a);
+	}
+
+	public int getBrightness() {
+		return (r + g + b) / 3;
 	}
 
 }

@@ -1,11 +1,18 @@
 package components;
 
+import core.IAction;
+
 public class IntTextbox extends Textbox {
 
 	public boolean allowNegatives = false;
 
 	public IntTextbox(String text) {
 		super(text);
+	}
+	
+	@Override
+	public void setOnKeyEnter(IAction onKeyEnter) {
+		setEditing(false);
 	}
 
 	@Override

@@ -15,8 +15,6 @@ public class Textbox extends Button {
 	private boolean editing;
 	private boolean rescindNextUnedit;
 
-	private Boolean setEditing;
-
 	public IAction onKeyTab = ()->{};
 	public IAction onKeyEnter = ()->append(System.lineSeparator());
 
@@ -130,7 +128,7 @@ public class Textbox extends Button {
 	}
 
 	public void setEditing(boolean editing) {
-		setEditing = editing;
+		this.editing = editing;
 	}
 
 	public boolean isEditing() {
@@ -152,11 +150,6 @@ public class Textbox extends Button {
 	@Override
 	protected void onUpdate(PVector pos, PVector size) {
 		super.onUpdate(pos, size);
-
-		if (setEditing != null) {
-			editing = setEditing;
-			setEditing = null;
-		}
 
 		if (editing) {
 			if (!text.endsWith("_")) {

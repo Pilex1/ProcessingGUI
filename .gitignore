@@ -2,3 +2,5 @@ bin/
 .settings/
 
 \.attach_pid11667
+
+out\.png

@@ -9,14 +9,14 @@ import core.GraphicsComponent;
 import processing.core.*;
 
 public class Label extends GraphicsComponent {
-
+	
 	protected PFont font;
 	public int textSize;
 	public Color textColor;
 	public Color currentBackgroundColor;
 
 	public Color borderColor = Color.DARK_GRAY;
-	public int borderRadius = 10;
+	public int borderRadius = 5;
 	public int borderThickness = 2;
 	// controls how much inward the text is rendered at, relative to the edge of the
 	// label
@@ -31,7 +31,7 @@ public class Label extends GraphicsComponent {
 		currentBackgroundColor = new Color(0, 0, 0, 0);
 
 		font = Fonts.LatoLight;
-		textSize = 18;
+		textSize = 20;
 		textColor = Color.BLACK;
 		currentBackgroundColor = Color.LIGHT_GRAY;
 

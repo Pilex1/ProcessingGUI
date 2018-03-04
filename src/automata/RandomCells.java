@@ -1,9 +1,9 @@
 package automata;
 
-import java.awt.Color;
 import static main.Applet.P;
 
 import processing.core.PVector;
+import util.Color;
 
 public class RandomCells extends Grid<Boolean> {
 
@@ -14,24 +14,30 @@ public class RandomCells extends Grid<Boolean> {
 	@Override
 	protected Color getColor(Boolean t) {
 		if (t) {
-			return Color.BLACK;
+			return Color.Black;
 		}
-		return Color.WHITE;
+		return Color.White;
 	}
-	
+
 	@Override
-	protected Boolean getDefault() {
+	protected Boolean getDefault(int x, int y) {
 		return false;
 	}
-	
+
 	@Override
 	protected void onUpdate(PVector pos, PVector size) {
 		super.onUpdate(pos, size);
-		if (P.frameCount%10==0) {
+		if (P.frameCount % 10 == 0) {
 			int x = P.R.nextInt(getGridX());
 			int y = P.R.nextInt(getGridY());
-			setCell(x, y, !getCell(x,y));
+			setCell(x, y, !getCell(x, y));
 		}
+	}
+
+	@Override
+	protected void onGridSizeChange() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

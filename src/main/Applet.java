@@ -1,8 +1,17 @@
 package main;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
+
 import automata.LangtonsAnt;
+import automata.LangtonsAnt.Ant;
+import automata.LangtonsAntImage;
 import automata.RandomCells;
 import components.Button;
 import components.IntTextbox;
@@ -87,35 +96,57 @@ public class Applet extends PApplet {
 	private Layout langton() {
 		StaticGridLayout layout = new StaticGridLayout(2, 1);
 		{
-			LangtonsAnt l = new LangtonsAnt(P.width-400,P.height);
+			// LangtonsAnt l = new LangtonsAnt(P.width - 500, P.height);
+			LangtonsAnt l = new LangtonsAntImage(P.width - 500, P.height, P.loadImage("pic.png"));
 			l.square = true;
 			l.gridWrap = true;
 			layout.addComponent(l);
 
-			StaticGridLayout gui = new StaticGridLayout(1, 12);
-			gui.addComponent(new Button("Spawn ant in middle", () -> {
+			DynamicGridLayout gui = new DynamicGridLayout();
+			gui.addComponentToCol(new Button("Spawn ant in middle", () -> {
 				l.addAnt();
-			}));
-			gui.addComponent(new Button("Invert all ants", ()->{
-				l.invertAnts();
-			}));
-			gui.addComponent(new Button("Clear world", () -> {
-				l.clear();
-				l.removeAllAnts();
-			}));
-			gui.addComponent(new Button("Destroy all ants", () -> {
-				l.removeAllAnts();
-			}));
-			gui.addComponent(new Button("Step",()->{
+			}), 0);
+			gui.addComponentToCol(new Button("Step", () -> {
 				l.step();
-				l.pause=true;
-			}));
-			gui.addComponent(new Button("Stop/Start",()->{
-				l.pause=!l.pause;
-			}));
+				l.pause = true;
+			}), 0);
+			gui.addComponentToCol(new Button("Stop/Start", () -> {
+				l.pause = !l.pause;
+			}), 0);
+			gui.addComponentToCol(new Button("Invert all ants", () -> {
+				l.invertAnts();
+			}), 0);
+			gui.addComponentToCol(new Button("Clear world", () -> {
+				l.clear();
+			}), 0);
+			gui.addComponentToCol(new Button("Destroy all ants", () -> {
+				l.removeAllAnts();
+			}), 0);
+			gui.addComponentToCol(new Label("Iterations: 0") {
+				@Override
+				protected void onUpdate(PVector pos, PVector size) {
+					if (l.numberOfAnts() > 0)
+						setText("Iterations: " + l.getAnt().getIterations());
+				}
+			}, 0);
+			gui.addComponentToCol(new Button("Export to PNG", () -> {
+				Image img = l.getImage();
+				BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null),
+						BufferedImage.TYPE_INT_ARGB);
+				Graphics2D bGr = bimage.createGraphics();
+				bGr.drawImage(img, 0, 0, null);
+				bGr.dispose();
 
-			Label lbl_rule = new Label("Rule: LR");
-			gui.addComponent(lbl_rule);
+				try {
+					ImageIO.write(bimage, "png", new File("out.png"));
+					System.out.println("File exported");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}), 0);
+
+			Label lbl_rule = new Label("Rule: " + l.getRule());
+			gui.addComponentToCol(lbl_rule, 1);
 			Textbox t_rule = new Textbox("LR");
 			t_rule.onKeyEnter = () -> {
 				if (l.isRuleValid(t_rule.getText())) {
@@ -124,31 +155,53 @@ public class Applet extends PApplet {
 					l.removeAllAnts();
 					l.addAnt();
 					lbl_rule.setText("Rule: " + t_rule.getText());
+					t_rule.setEditing(false);
 				}
 			};
-			gui.addComponent(t_rule);
+			gui.addComponentToCol(t_rule, 1);
 
-			gui.addComponent(new Label("Speed"));
+			gui.addComponentToCol(new Label("Speed") {
+				@Override
+				protected void onUpdate(PVector pos, PVector size) {
+					setText("Speed: " + l.speed);
+				}
+			}, 1);
 			IntTextbox t_speed = new IntTextbox("2");
 			t_speed.allowNegatives = true;
 			t_speed.onKeyEnter = () -> {
 				l.speed = t_speed.getValue();
+				t_speed.setEditing(false);
 			};
-			gui.addComponent(t_speed);
+			gui.addComponentToCol(t_speed, 1);
 
-			gui.addComponent(new Label("Grid size"));
+			gui.addComponentToCol(new Label("Grid size"), 1);
 			IntTextbox t_size = new IntTextbox("6");
 			t_size.onKeyEnter = () -> {
 				l.setGridSize(t_size.getValue());
+				t_size.setEditing(false);
 			};
-			gui.addComponent(t_size);
+			gui.addComponentToCol(t_size, 1);
+
+			gui.addComponentToCol(new Label("Position") {
+				@Override
+				protected void onUpdate(PVector pos, PVector size) {
+					Ant ant = l.getAnt();
+					setText("Position: x=" + ant.getX() + " y=" + ant.getY());
+				}
+			}, 1);
+			gui.addComponentToCol(new Label("Direction") {
+				@Override
+				protected void onUpdate(PVector pos, PVector size) {
+					Ant ant = l.getAnt();
+					setText("Direction: " + ant.getDir());
+				}
+			}, 1);
 
 			layout.addComponent(gui);
 
-			l.setRule(t_rule.getText());
 			l.speed = t_speed.getValue();
 			l.setGridSize(t_size.getValue());
-			
+
 			l.addAnt();
 		}
 		return layout;

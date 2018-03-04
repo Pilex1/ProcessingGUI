@@ -9,6 +9,8 @@ import util.Rectangle;
 
 import static main.Applet.P;
 
+import java.awt.Image;
+
 public abstract class Canvas extends GraphicsComponent {
 
 	// stores the PGraphics object to draw to
@@ -22,27 +24,36 @@ public abstract class Canvas extends GraphicsComponent {
 	private boolean draw;
 
 	public Canvas(int width, int height) {
+		setBufferSize(width, height);
+		setMinSize(width, height);
+		setMaxSize(width, height);
+	}
+
+	protected void setBufferSize(int width, int height) {
 		buffer = P.createGraphics(width, height);
 		buffer.beginDraw();
 		buffer.background(255);
 		buffer.endDraw();
 		graphics = buffer;
-		setMinSize(width, height);
-		setMaxSize(width, height);
 	}
-	
+
+	public Image getImage() {
+		return graphics.image;
+	}
+
 	public int getWidth() {
 		return graphics.width;
 	}
-	
-	public int getHeight( ) {
+
+	public int getHeight() {
 		return graphics.height;
 	}
 
 	protected void renderBuffer(PVector pos, PVector size) {
+		endDraw();
 		float spaceX = size.x - buffer.width;
 		float spaceY = size.y - buffer.height;
-		P.image(buffer, pos.x + spaceX/2, pos.y + spaceY/2);
+		P.image(buffer, pos.x + spaceX / 2, pos.y + spaceY / 2, buffer.width, buffer.height);
 	}
 
 	@Override
@@ -51,22 +62,25 @@ public abstract class Canvas extends GraphicsComponent {
 	private void checkDrawState() {
 		if (this instanceof GameCanvas)
 			return;
-		if (!draw) {
-			throw new RuntimeException("Buffer not drawable!");
-		}
+		beginDraw();
 	}
 
 	public void beginDraw() {
-		buffer.beginDraw();
-		draw = true;
+		if (!draw) {
+			buffer.beginDraw();
+			draw = true;
+		}
 	}
 
 	public void endDraw() {
-		buffer.endDraw();
-		draw = false;
+		if (draw) {
+			buffer.endDraw();
+			draw = false;
+		}
 	}
 
 	public void background(int r, int g, int b, int a) {
+		checkDrawState();
 		graphics.background(r, g, b, a);
 	}
 
@@ -85,6 +99,10 @@ public abstract class Canvas extends GraphicsComponent {
 		} else {
 			graphics.strokeWeight(weight);
 		}
+	}
+
+	public void noStroke() {
+		strokeWeight(0);
 	}
 
 	public void stroke(int r, int g, int b, int a) {
@@ -111,6 +129,10 @@ public abstract class Canvas extends GraphicsComponent {
 
 	public void fill(Color c) {
 		fill(c.r, c.g, c.b, c.a);
+	}
+
+	public void fill(java.awt.Color c) {
+		fill(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha());
 	}
 
 	public void ellipse(float centerX, float centerY, float radiusX, float radiusY) {
@@ -149,7 +171,8 @@ public abstract class Canvas extends GraphicsComponent {
 	}
 
 	public void image(PImage img, float x, float y) {
-		P.image(img, x, y);
+		checkDrawState();
+		graphics.image(img, x, y);
 	}
 
 	public void image(PImage img, PVector pos) {
@@ -201,7 +224,7 @@ public abstract class Canvas extends GraphicsComponent {
 
 	public void transparency(float alpha) {
 		checkDrawState();
-		graphics.tint(255, 255,255,alpha);
+		graphics.tint(255, 255, 255, alpha);
 	}
 
 }

@@ -12,7 +12,7 @@ import static main.Applet.P;
 public abstract class GraphicsComponent {
 
 	// padding around the element
-	public EdgeTuple padding = new EdgeTuple(5);
+	public EdgeTuple padding = new EdgeTuple(2);
 
 	private PVector maxSize = new PVector(Float.MAX_VALUE, Float.MAX_VALUE);
 	private PVector minSize = new PVector(0, 0);
@@ -150,7 +150,7 @@ public abstract class GraphicsComponent {
 
 	private void renderComponent(PVector pos, PVector size) {
 		if (requireGraphicalUpdate && this instanceof Layout) {
-			P.strokeWeight(0);
+			P.noStroke();
 			Color backgroundColor = ((Layout) this).backgroundColor;
 			P.fill(backgroundColor.getRGB());
 			P.rect(pos.x, pos.y, size.x, size.y);

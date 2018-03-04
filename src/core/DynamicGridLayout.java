@@ -11,20 +11,39 @@ public class DynamicGridLayout extends GridLayout {
 	public DynamicGridLayout() {
 	}
 
+	public boolean addComponentToCol(GraphicsComponent g, int col) {
+		if (col < 0)
+			return false;
+		addComponent(g, col, getColumnLength(col));
+		return true;
+	}
+
+	public boolean addComponentToRow(GraphicsComponent g, int row) {
+		if (row < 0)
+			return false;
+		addComponent(g, getRowLength(row), row);
+		return true;
+	}
+
 	@Override
 	public boolean addComponent(GraphicsComponent g, int x, int y) {
 		if (x < 0 || y < 0)
 			return false;
 		if (getComponent(x, y) != null)
 			return false;
+		// fill up any uninitialised columns with an empty list until we reach our
+		// target column
 		for (int i = this.x; i <= x; i++) {
 			components.add(new ArrayList<>());
 		}
+		// gets the column that we should populate
 		ArrayList<GraphicsComponent> gcs = components.get(x);
+		// fills up any empty space in that column until we reach our target x value
 		for (int i = gcs.size(); i <= y; i++) {
 			gcs.add(null);
 		}
 		gcs.set(y, g);
+
 		updateSize();
 		recalculateBounds();
 		g.parent = this;
@@ -48,13 +67,27 @@ public class DynamicGridLayout extends GridLayout {
 		if (g != null) {
 			ArrayList<GraphicsComponent> l = components.get(x);
 			l.set(y, null);
-			g.parent=null;
+			g.parent = null;
 		}
 		updateSize();
 		return g;
 	}
 
-	private int getLength(int column) {
+	public int getRowLength(int row) {
+		int length = 0;
+		for (int col = 0; col < x; col++) {
+			if (getComponent(col, row) != null) {
+				length = col + 1;
+			}
+		}
+		return length;
+	}
+
+	public int getColumnLength(int column) {
+		if (column >= components.size())
+			return 0;
+		if (column < 0)
+			return 0;
 		for (int i = components.get(column).size() - 1; i >= 0; i--) {
 			if (components.get(column).get(i) != null) {
 				return i + 1;
@@ -65,7 +98,7 @@ public class DynamicGridLayout extends GridLayout {
 
 	private void updateSize() {
 		for (int i = components.size() - 1; i >= 0; i--) {
-			if (getLength(i) == 0) {
+			if (getColumnLength(i) == 0) {
 				components.remove(i);
 			} else {
 				break;
@@ -75,7 +108,7 @@ public class DynamicGridLayout extends GridLayout {
 
 		y = 0;
 		for (int i = 0; i < components.size(); i++) {
-			y = Math.max(y, getLength(i));
+			y = Math.max(y, getColumnLength(i));
 		}
 		for (int i = 0; i < components.size(); i++) {
 			while (components.get(i).size() > y) {
