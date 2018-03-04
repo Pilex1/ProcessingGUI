@@ -16,6 +16,7 @@ public class LangtonsAntImage extends LangtonsAnt {
 			rule += "LR";
 		}
 		setRule(rule);
+		customColor=false;
 		setImage();
 	}
 
@@ -27,7 +28,7 @@ public class LangtonsAntImage extends LangtonsAnt {
 		for (int i = 0; i < x; i++) {
 			for (int j = 0; j < y; j++) {
 				Color c = new Color(img.get(i, j));
-				brightness[i][j] = c.getBrightness();
+				brightness[i][j] = 255-	c.getBrightness();
 			}
 		}
 	}
@@ -39,7 +40,7 @@ public class LangtonsAntImage extends LangtonsAnt {
 
 	@Override
 	protected Integer getDefault(int x, int y) {
-		return brightness[x][y];
+		return brightness[x][y] % getStates();
 	}
 
 }

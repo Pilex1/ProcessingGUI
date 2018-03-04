@@ -12,7 +12,7 @@ import static main.Applet.P;
 public class LangtonsAnt extends Grid<Integer> {
 
 	public boolean pause = true;
-	public boolean customColor = false;
+	public boolean customColor = true;
 
 	private HashSet<Ant> ants = new HashSet<>();
 	private HashSet<Ant> antsToBeRemoved = new HashSet<>();
@@ -166,8 +166,8 @@ public class LangtonsAnt extends Grid<Integer> {
 
 	@Override
 	protected Integer getDefault(int x, int y) {
-		if (x < 1.0 / 3 * getGridX())
-			return 1;
+//		if (x < 1.0 / 3 * getGridX())
+//			return 1;
 		return 0;
 	}
 
@@ -260,7 +260,7 @@ public class LangtonsAnt extends Grid<Integer> {
 				return;
 			}
 
-			char move = rule[state];
+			char move = rule[state % getStates()];
 			if (move == 'N') {
 				dir = Direction.NORTH;
 			} else if (move == 'E') {

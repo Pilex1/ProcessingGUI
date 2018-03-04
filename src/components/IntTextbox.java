@@ -17,19 +17,18 @@ public class IntTextbox extends Textbox {
 
 	@Override
 	public void append(char c) {
-		String s = getText() + c;
-		if (s.equals("-")) {
-			super.append(c);
+		if (getText().equals("") && c == '-' && allowNegatives) {
+			super.append('-');
 			return;
 		}
+		
+		String s = getText() + c;
 		int i = 0;
 		try {
 			i = Integer.parseInt(s);
 		} catch (NumberFormatException e) {
 			return;
 		}
-		if (i < 0 && !allowNegatives)
-			return;
 		super.append(c);
 	}
 	

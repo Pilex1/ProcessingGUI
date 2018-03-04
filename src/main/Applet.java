@@ -14,6 +14,7 @@ import automata.LangtonsAnt.Ant;
 import automata.LangtonsAntImage;
 import automata.RandomCells;
 import components.Button;
+import components.FloatTextbox;
 import components.IntTextbox;
 import components.Label;
 import components.Textbox;
@@ -96,8 +97,9 @@ public class Applet extends PApplet {
 	private Layout langton() {
 		StaticGridLayout layout = new StaticGridLayout(2, 1);
 		{
-			// LangtonsAnt l = new LangtonsAnt(P.width - 500, P.height);
-			LangtonsAnt l = new LangtonsAntImage(P.width - 500, P.height, P.loadImage("pic.png"));
+			LangtonsAnt l = new LangtonsAnt(P.width - 500, P.height);
+			// LangtonsAnt l = new LangtonsAntImage(P.width - 500, P.height,
+			// P.loadImage("pic.png"));
 			l.square = true;
 			l.gridWrap = true;
 			layout.addComponent(l);
@@ -175,25 +177,33 @@ public class Applet extends PApplet {
 			gui.addComponentToCol(t_speed, 1);
 
 			gui.addComponentToCol(new Label("Grid size"), 1);
-			IntTextbox t_size = new IntTextbox("6");
+			FloatTextbox t_size = new FloatTextbox("6");
 			t_size.onKeyEnter = () -> {
 				l.setGridSize(t_size.getValue());
 				t_size.setEditing(false);
 			};
 			gui.addComponentToCol(t_size, 1);
 
-			gui.addComponentToCol(new Label("Position") {
+			gui.addComponentToCol(new Label("Position:") {
 				@Override
 				protected void onUpdate(PVector pos, PVector size) {
 					Ant ant = l.getAnt();
-					setText("Position: x=" + ant.getX() + " y=" + ant.getY());
+					if (ant == null) {
+						setText("Position:");
+					} else {
+						setText("Position: x=" + ant.getX() + " y=" + ant.getY());
+					}
 				}
 			}, 1);
-			gui.addComponentToCol(new Label("Direction") {
+			gui.addComponentToCol(new Label("Direction:") {
 				@Override
 				protected void onUpdate(PVector pos, PVector size) {
 					Ant ant = l.getAnt();
-					setText("Direction: " + ant.getDir());
+					if (ant == null) {
+						setText("Direction:");
+					} else {
+						setText("Direction: " + ant.getDir());
+					}
 				}
 			}, 1);
 

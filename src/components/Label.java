@@ -31,7 +31,7 @@ public class Label extends GraphicsComponent {
 		currentBackgroundColor = new Color(0, 0, 0, 0);
 
 		font = Fonts.LatoLight;
-		textSize = 20;
+		textSize = 18;
 		textColor = Color.BLACK;
 		currentBackgroundColor = Color.LIGHT_GRAY;
 
