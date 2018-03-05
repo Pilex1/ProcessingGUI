@@ -97,9 +97,8 @@ public class Applet extends PApplet {
 	private Layout langton() {
 		StaticGridLayout layout = new StaticGridLayout(2, 1);
 		{
-			LangtonsAnt l = new LangtonsAnt(P.width - 500, P.height);
-			// LangtonsAnt l = new LangtonsAntImage(P.width - 500, P.height,
-			// P.loadImage("pic.png"));
+			 //LangtonsAnt l = new LangtonsAnt(P.width - 500, P.height);
+			LangtonsAnt l = new LangtonsAntImage(P.width - 500, P.height, P.loadImage("pic2.png"));
 			l.square = true;
 			l.gridWrap = true;
 			layout.addComponent(l);
@@ -149,7 +148,7 @@ public class Applet extends PApplet {
 
 			Label lbl_rule = new Label("Rule: " + l.getRule());
 			gui.addComponentToCol(lbl_rule, 1);
-			Textbox t_rule = new Textbox("LR");
+			Textbox t_rule = new Textbox(l.getRule());
 			t_rule.onKeyEnter = () -> {
 				if (l.isRuleValid(t_rule.getText())) {
 					l.setRule(t_rule.getText());
@@ -177,7 +176,7 @@ public class Applet extends PApplet {
 			gui.addComponentToCol(t_speed, 1);
 
 			gui.addComponentToCol(new Label("Grid size"), 1);
-			FloatTextbox t_size = new FloatTextbox("6");
+			FloatTextbox t_size = new FloatTextbox("1");
 			t_size.onKeyEnter = () -> {
 				l.setGridSize(t_size.getValue());
 				t_size.setEditing(false);

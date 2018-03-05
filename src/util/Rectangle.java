@@ -13,8 +13,8 @@ public class Rectangle implements Serializable {
 	private PVector size;
 
 	public Rectangle(PVector pos, PVector size) {
-		this.pos = new PVector(pos.x, pos.y);
-		this.size = size;
+		this.pos = pos.copy();
+		this.size = size.copy();
 	}
 
 	// makes sure that size is positive

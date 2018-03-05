@@ -166,8 +166,8 @@ public class LangtonsAnt extends Grid<Integer> {
 
 	@Override
 	protected Integer getDefault(int x, int y) {
-//		if (x < 1.0 / 3 * getGridX())
-//			return 1;
+		// if (x < 1.0 / 3 * getGridX())
+		// return 1;
 		return 0;
 	}
 
@@ -199,6 +199,7 @@ public class LangtonsAnt extends Grid<Integer> {
 
 	public class Ant {
 		int iterations;
+
 		public int getIterations() {
 			return iterations;
 		}
@@ -248,6 +249,7 @@ public class LangtonsAnt extends Grid<Integer> {
 		}
 
 		void move() {
+			normaliseCoords();
 
 			// rotate based on color of current cell
 			// changes the color of current cell
@@ -342,6 +344,7 @@ public class LangtonsAnt extends Grid<Integer> {
 
 		@Override
 		void move() {
+			normaliseCoords();
 
 			setCell(x, y, (getCell(x, y) - 1 + getStates()) % getStates());
 

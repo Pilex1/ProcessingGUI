@@ -41,11 +41,11 @@ public class Color implements Serializable {
 
 		Transparent = new Color(255, 255, 255, 0);
 
-		White = new Color(255);
-		LightGrey = new Color(192);
-		Grey = new Color(128);
-		DarkGrey = new Color(64);
-		Black = new Color(0);
+		White = new Color(255,255,255);
+		LightGrey = new Color(192,192,192);
+		Grey = new Color(128,128,128);
+		DarkGrey = new Color(64,64,64);
+		Black = new Color(0,0,0);
 
 		LightBlue = new Color(22, 79, 184);
 		MediumBlue = new Color(37, 101, 218);
