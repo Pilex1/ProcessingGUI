@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import processing.core.*;
+import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 import util.EdgeTuple;
 import static main.Applet.P;
@@ -117,6 +118,9 @@ public abstract class GraphicsComponent {
 	}
 
 	public void onMouseRelease(MouseEvent event) {
+	}
+
+	public void onScroll(MouseEvent event) {
 	}
 
 	protected abstract void onUpdate(PVector pos, PVector size);

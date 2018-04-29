@@ -23,9 +23,12 @@ public abstract class GridLayout extends Layout {
 
 	// recalculate min and max sizes
 	// this should be called whenever a component is added/removed
+	// however, if min and max sizes have been manually set, we shouldn't change them
 	protected void recalculateBounds() {
-		setMinSize(getCumulativeMinWidth(), getCumulativeMinHeight());
-		setMaxSize(getCumulativeMaxWidth(), getCumulativeMaxHeight());
+		setMinSize(getMinWidth() == 0 ? getCumulativeMinWidth() : getMinWidth(), 
+				getMinHeight() == 0 ? getCumulativeMinHeight() : getMinHeight());
+		setMaxSize(getMaxWidth() == Float.MAX_VALUE ? getCumulativeMaxWidth() : getMaxWidth(), 
+				getMaxHeight() == Float.MAX_VALUE ? getCumulativeMaxHeight() : getMaxHeight());
 	}
 
 	protected float getMaxWidthInCol(int col) {

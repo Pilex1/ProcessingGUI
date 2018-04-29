@@ -37,13 +37,32 @@ public class Applet extends PApplet {
 	public Random R = new Random();
 
 	public static Applet P;
-
+	
 	@Override
 	public void settings() {
 		size(1280, 720);
+		// DO NOT PUT ANY OTHER PROCESSING FUNCTIONS IN HERE
+	}
+
+	@Override
+	public void setup() {
+		keys = new boolean[256];
 		P = this;
 		Color.Init();
+		Fonts.Init();
 		// fullScreen();
+	}
+	
+	protected GraphicsComponent mainComponent() {
+return langton();
+		//return basicSample();
+	}
+	
+	private Layout basicSample() {
+		StaticGridLayout layout  = new StaticGridLayout(1, 2);
+		layout.addComponent(new Label("Hello"),0,0);
+		layout.addComponent(new Label("World"), 0, 1);
+		return layout;
 	}
 
 	private Layout sample1() {
@@ -97,7 +116,7 @@ public class Applet extends PApplet {
 	private Layout langton() {
 		StaticGridLayout layout = new StaticGridLayout(2, 1);
 		{
-			 //LangtonsAnt l = new LangtonsAnt(P.width - 500, P.height);
+			// LangtonsAnt l = new LangtonsAnt(P.width - 500, P.height);
 			LangtonsAnt l = new LangtonsAntImage(P.width - 500, P.height, P.loadImage("pic2.png"));
 			l.square = true;
 			l.gridWrap = true;
@@ -176,7 +195,7 @@ public class Applet extends PApplet {
 			gui.addComponentToCol(t_speed, 1);
 
 			gui.addComponentToCol(new Label("Grid size"), 1);
-			FloatTextbox t_size = new FloatTextbox("1");
+			FloatTextbox t_size = new FloatTextbox("5");
 			t_size.onKeyEnter = () -> {
 				l.setGridSize(t_size.getValue());
 				t_size.setEditing(false);
@@ -217,16 +236,13 @@ public class Applet extends PApplet {
 	}
 
 	@Override
-	public void setup() {
-		Fonts.Init();
-		keys = new boolean[256];
-		frame = new Frame(langton());
-	}
-
-	@Override
 	public void draw() {
+		if (frame==null) {
+			frame = new Frame(mainComponent());
+		}
 		frame.update();
 		frame.render();
+		//P.text("hello", 200, 200);
 	}
 
 	@Override

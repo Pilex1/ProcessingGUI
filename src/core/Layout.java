@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 
 import processing.core.PVector;
+import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 //represents a screen/display on which GraphicsComponents can be added

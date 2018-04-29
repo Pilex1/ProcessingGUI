@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import core.IAction;
 import processing.core.*;
+import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 public class Textbox extends Button {

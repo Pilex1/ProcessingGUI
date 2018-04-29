@@ -5,9 +5,9 @@ import java.io.*;
 import processing.core.*;
 
 public class Rectangle implements Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	// top left
 	private PVector pos;
 	private PVector size;
@@ -127,7 +127,7 @@ public class Rectangle implements Serializable {
 	public float getCenterY() {
 		return (getY1() + getY2()) / 2;
 	}
-	
+
 	public Rectangle fromCamera(PVector camera) {
 		return new Rectangle(PVector.sub(pos, camera), size.copy());
 	}
@@ -139,27 +139,56 @@ public class Rectangle implements Serializable {
 	}
 
 	public boolean isIntersecting(Rectangle other) {
-		if (this.getX1() < other.getX2() && this.getX2() > other.getX1() && this.getY2() > other.getY1()
-				&& this.getY1() < other.getY2()) {
-			return true;
+		return isIntersecting(other, false);
+	}
+
+	public boolean isIntersecting(Rectangle other, boolean countEdges) {
+		if (countEdges) {
+			return this.getX1() <= other.getX2() && this.getX2() >= other.getX1() && this.getY2() >= other.getY1()
+					&& this.getY1() <= other.getY2();
+		} else {
+			return this.getX1() < other.getX2() && this.getX2() > other.getX1() && this.getY2() > other.getY1()
+					&& this.getY1() < other.getY2();
 		}
-		return false;
 	}
-	
+
+	// returns if the given side of THIS rectangle is intersecting with the other
+	// rectangle
+	public boolean isIntersecting(Rectangle other, Side side) {
+		if (!isIntersecting(other, true))
+			return false;
+		switch (side) {
+		case BOTTOM:
+			return other.getY1() <= this.getY2() && other.getY2() >= this.getY2();
+		case LEFT:
+			return other.getX2() >= this.getX1() && other.getX1() <= this.getX1();
+		case RIGHT:
+			return other.getX1() <= this.getX2() && other.getX2() >= this.getX2();
+		case TOP:
+			return other.getY2() >= this.getY1() && other.getY1() <= this.getY1();
+		default:
+			throw new RuntimeException();
+		}
+	}
+
 	public PVector topLeft() {
-		return new PVector(pos.x,pos.y);
+		return new PVector(pos.x, pos.y);
 	}
-	
+
 	public PVector topRight() {
-		return new PVector(pos.x+size.x,pos.y);
+		return new PVector(pos.x + size.x, pos.y);
 	}
-	
+
 	public PVector bottomLeft() {
-		return new PVector(pos.x,pos.y+size.y);
+		return new PVector(pos.x, pos.y + size.y);
 	}
-	
+
 	public PVector bottomRight() {
-		return new PVector(pos.x+size.x,pos.y+size.y);
+		return new PVector(pos.x + size.x, pos.y + size.y);
+	}
+
+	public Rectangle copy() {
+		return new Rectangle(pos.copy(), size.copy());
 	}
 
 }
