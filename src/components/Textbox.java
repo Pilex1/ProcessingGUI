@@ -3,8 +3,8 @@ package components;
 import java.awt.Color;
 
 import core.IAction;
-import processing.core.*;
-import processing.event.KeyEvent;
+import processing.core.PConstants;
+import processing.core.PVector;
 import processing.event.MouseEvent;
 
 public class Textbox extends Button {
@@ -16,8 +16,9 @@ public class Textbox extends Button {
 	private boolean editing;
 	private boolean rescindNextUnedit;
 
-	public IAction onKeyTab = ()->{};
-	public IAction onKeyEnter = ()->append(System.lineSeparator());
+	public IAction onKeyTab = () -> {
+	};
+	public IAction onKeyEnter = () -> append(System.lineSeparator());
 
 	// top left pos
 	public Textbox(String text) {
@@ -37,7 +38,7 @@ public class Textbox extends Button {
 	public Textbox() {
 		this("");
 	}
-	
+
 	@Override
 	public void onKeyType(char key) {
 		if (editing) {
@@ -68,7 +69,7 @@ public class Textbox extends Button {
 				requestGraphicalUpdate();
 			}
 		} else {
-			if (event.getButton()== PConstants.LEFT && hoveredOver) {
+			if (event.getButton() == PConstants.LEFT && hoveredOver) {
 				editing = true;
 				requestGraphicalUpdate();
 			}
@@ -107,7 +108,7 @@ public class Textbox extends Button {
 			text = s;
 		}
 	}
-	
+
 	public void append(String s) {
 		for (char c : s.toCharArray()) {
 			append(c);

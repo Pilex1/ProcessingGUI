@@ -1,15 +1,17 @@
 package components;
 
-import static main.Applet.*;
+import static main.Applet.P;
 
 import java.awt.Color;
 
 import core.Fonts;
 import core.GraphicsComponent;
-import processing.core.*;
+import processing.core.PConstants;
+import processing.core.PFont;
+import processing.core.PVector;
 
 public class Label extends GraphicsComponent {
-	
+
 	protected PFont font;
 	public int textSize;
 	public Color textColor;
@@ -87,13 +89,15 @@ public class Label extends GraphicsComponent {
 		float w = size.x - padding.right - padding.left - 2 * textBorder,
 				h = size.y - padding.bottom - padding.top - 2 * textBorder;
 		P.text(text, x, y, w, h);
-		
+
 		/*
-		float yc = y;
-		while(yc<y+h) {
-			P.line(x, yc, x+w, yc);
-			yc += P.getGraphics().textLeading;
-		}
-		*/
+		 * float yc = y; while(yc<y+h) { P.line(x, yc, x+w, yc); yc +=
+		 * P.getGraphics().textLeading; }
+		 */
+	}
+
+	@Override
+	public String toString() {
+		return text;
 	}
 }

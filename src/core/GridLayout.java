@@ -23,11 +23,12 @@ public abstract class GridLayout extends Layout {
 
 	// recalculate min and max sizes
 	// this should be called whenever a component is added/removed
-	// however, if min and max sizes have been manually set, we shouldn't change them
+	// however, if min and max sizes have been manually set, we shouldn't change
+	// them
 	protected void recalculateBounds() {
-		setMinSize(getMinWidth() == 0 ? getCumulativeMinWidth() : getMinWidth(), 
+		setMinSize(getMinWidth() == 0 ? getCumulativeMinWidth() : getMinWidth(),
 				getMinHeight() == 0 ? getCumulativeMinHeight() : getMinHeight());
-		setMaxSize(getMaxWidth() == Float.MAX_VALUE ? getCumulativeMaxWidth() : getMaxWidth(), 
+		setMaxSize(getMaxWidth() == Float.MAX_VALUE ? getCumulativeMaxWidth() : getMaxWidth(),
 				getMaxHeight() == Float.MAX_VALUE ? getCumulativeMaxHeight() : getMaxHeight());
 	}
 
@@ -311,6 +312,7 @@ public abstract class GridLayout extends Layout {
 				if (g != null) {
 					g.render(posSizeCache[i][j].pos, posSizeCache[i][j].size);
 				}
+				System.out.println(i + "," + j);
 			}
 		}
 	}

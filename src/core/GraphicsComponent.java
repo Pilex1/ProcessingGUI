@@ -9,10 +9,10 @@ import processing.event.MouseEvent;
 import util.EdgeTuple;
 import static main.Applet.P;
 
-// all graphical elements extend this class
+/** all graphical elements extend this class */
 public abstract class GraphicsComponent {
 
-	// padding around the element
+	/** padding around the element */
 	public EdgeTuple padding = new EdgeTuple(2);
 
 	private PVector maxSize = new PVector(Float.MAX_VALUE, Float.MAX_VALUE);
@@ -23,13 +23,17 @@ public abstract class GraphicsComponent {
 
 	Layout parent;
 
-	// indicates that graphics within the component need to be re-rendered
-	// but its relative position and size stays the same
-	// e.g. when a button is being hovered over
+	/**
+	 * indicates that graphics within the component need to be re-rendered but its
+	 * relative position and size stays the same<br>
+	 * e.g. when a button is being hovered over
+	 */
 	private boolean requireGraphicalUpdate = true;
 
-	// indicates that the relative position or size of the component
-	// is changed - parent component must recalculate all positions + sizes
+	/**
+	 * indicates that the relative position or size of the component is changed<br>
+	 * parent component must recalculate all positions + sizes
+	 */
 	private boolean requirePositionalUpdate = true;
 
 	protected GraphicsComponent() {

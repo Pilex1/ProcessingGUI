@@ -1,7 +1,9 @@
 package components;
 
-import java.awt.Color;
 import static main.Applet.P;
+
+import java.awt.Color;
+
 import core.GraphicsComponent;
 import processing.core.PVector;
 
@@ -40,14 +42,17 @@ public class Slider extends GraphicsComponent {
 		P.stroke(strokeColor.getRGB());
 		P.strokeWeight(strokeWeight);
 		P.fill(sliderColor.getRGB());
-		{
-			float x = pos.x + knobRadius;
-			float y = pos.y - sliderSize / 2;
-			float w = size.x - 2 * knobRadius;
-			float h = sliderSize;
-			P.rect(x, y, w, h);
-		}
-		
+
+		float x = pos.x + knobRadius;
+		float y = pos.y - sliderSize / 2;
+		float w = size.x - 2 * knobRadius;
+		float h = sliderSize;
+		P.rect(x, y, w, h);
+	}
+
+	@Override
+	public String toString() {
+		return "" + val;
 	}
 
 }
