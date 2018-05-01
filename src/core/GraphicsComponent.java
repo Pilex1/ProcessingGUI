@@ -1,13 +1,13 @@
 package core;
 
+import static main.Applet.P;
+
 import java.awt.Color;
 import java.util.ArrayList;
 
-import processing.core.*;
-import processing.event.KeyEvent;
+import processing.core.PVector;
 import processing.event.MouseEvent;
 import util.EdgeTuple;
-import static main.Applet.P;
 
 /** all graphical elements extend this class */
 public abstract class GraphicsComponent {
@@ -133,12 +133,18 @@ public abstract class GraphicsComponent {
 
 	protected final void requestGraphicalUpdate() {
 		requireGraphicalUpdate = true;
+		if (this instanceof Layout) {
+			((Layout) this).getAllComponents().forEach(c -> c.requestGraphicalUpdate());
+		}
 		// System.out.println("Graphical update requested on " + this);
 	}
 
 	protected final void requestPositionalUpdate() {
 		requirePositionalUpdate = true;
 		requireGraphicalUpdate = true;
+		if (this instanceof Layout) {
+			((Layout) this).getAllComponents().forEach(c -> c.requestPositionalUpdate());
+		}
 		// System.out.println("Positional update requested on " + this);
 	}
 
@@ -158,8 +164,9 @@ public abstract class GraphicsComponent {
 
 	private void renderComponent(PVector pos, PVector size) {
 		if (requireGraphicalUpdate && this instanceof Layout) {
+			Layout l = (Layout) this;
 			P.noStroke();
-			Color backgroundColor = ((Layout) this).backgroundColor;
+			Color backgroundColor = l.backgroundColor;
 			P.fill(backgroundColor.getRGB());
 			P.rect(pos.x, pos.y, size.x, size.y);
 		}
@@ -168,6 +175,9 @@ public abstract class GraphicsComponent {
 		// if the parent layout is not rendered, then any graphical updates
 		// in the child layout will not be carried out
 		if (requireGraphicalUpdate || this instanceof Layout) {
+			if (!(this instanceof Layout)) {
+				System.out.println(this);
+			}
 			onRender(pos, size);
 		}
 		requireGraphicalUpdate = false;

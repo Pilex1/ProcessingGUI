@@ -312,9 +312,10 @@ public abstract class GridLayout extends Layout {
 				if (g != null) {
 					g.render(posSizeCache[i][j].pos, posSizeCache[i][j].size);
 				}
-				System.out.println(i + "," + j);
+				// System.out.print(i + "," + j + " ");
 			}
 		}
+		// System.out.println();
 	}
 
 	@Override

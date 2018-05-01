@@ -65,6 +65,7 @@ public class LayoutList extends Layout {
 			setMinSize(list.get(curLayoutID).getMinSize());
 			setMaxSize(list.get(curLayoutID).getMaxSize());
 		}
+		list.get(curLayoutID).requestGraphicalUpdate();
 		clearGraphics = true;
 		return true;
 	}

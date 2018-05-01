@@ -20,6 +20,7 @@ public class Button extends Label {
 
 	public IAction onPress;
 	protected boolean hoveredOver = false;
+	protected boolean clickedOn = false;
 
 	// top left position
 	public Button(String text, IAction onPress) {
@@ -33,17 +34,24 @@ public class Button extends Label {
 
 	@Override
 	public void onMousePress(MouseEvent event) {
-		if (event.getButton() == PConstants.LEFT && hoveredOver && !disabled) {
-			activate();
+		if (event.getButton() == PConstants.LEFT && event.getAction() == MouseEvent.PRESS && hoveredOver && !disabled) {
+			clickedOn = true;
 			requestGraphicalUpdate();
 		}
+
 	}
 
 	@Override
 	public void onMouseRelease(MouseEvent event) {
-		if (hoveredOver) {
+		if (event.getButton() == PConstants.LEFT && event.getAction() == MouseEvent.RELEASE && !disabled) {
+			if (hoveredOver) {
+				activate();
+			} else {
+				clickedOn = false;
+			}
 			requestGraphicalUpdate();
 		}
+
 	}
 
 	public void activate() {
