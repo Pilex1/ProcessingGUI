@@ -11,6 +11,10 @@ public class Rectangle implements Serializable {
 	// top left
 	private PVector pos;
 	private PVector size;
+	
+	public Rectangle(float x, float y, float width, float height) {
+		this(new PVector(x,y), new PVector(width,height));
+	}
 
 	public Rectangle(PVector pos, PVector size) {
 		this.pos = pos.copy();

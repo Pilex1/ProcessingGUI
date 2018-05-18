@@ -29,9 +29,8 @@ public class FloatTextbox extends Textbox{
 		
 		String s = getText() + c;
 		
-		float f = 0;
 		try {
-			f = Float.parseFloat(s);
+			Float.parseFloat(s);
 		} catch (NumberFormatException e) {
 			return;
 		}

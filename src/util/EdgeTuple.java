@@ -11,10 +11,14 @@ public class EdgeTuple {
 		this.left = left;
 	}
 	
+	public EdgeTuple(float x, float y) {
+		this(y,x,y,x);
+	}
+	
 	public EdgeTuple(float x) {
 		this(x,x,x,x);
 	}
-
+	
 	public void setAll(float x) {
 		top=right=bottom=left=x;
 	}

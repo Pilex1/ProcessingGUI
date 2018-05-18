@@ -5,6 +5,7 @@ import static main.Applet.P;
 import java.util.ArrayList;
 
 import processing.core.PVector;
+import util.Color;
 
 /**
  * represents a list of layouts, one of which is currently being rendered, and
@@ -39,6 +40,33 @@ public class LayoutList extends Layout {
 		if (layouts.length > 0) {
 			setActiveLayout(0);
 		}
+	}
+
+	public Layout getActiveLayout() {
+		if (list.size() == 0)
+			return null;
+		return list.get(curLayoutID);
+	}
+
+	@Override
+	public PVector getMaxSize() {
+		return getActiveLayout().getMaxSize();
+	}
+
+	@Override
+	public PVector getMinSize() {
+		return getActiveLayout().getMinSize();
+	}
+
+	public ArrayList<GraphicsComponent> getAllComponents(boolean includeLayouts) {
+		ArrayList<GraphicsComponent> gcList = new ArrayList<>();
+		list.forEach(l -> {
+			if (includeLayouts) {
+				gcList.add(l);
+			}
+			gcList.addAll(l.getAllComponents(includeLayouts));
+		});
+		return gcList;
 	}
 
 	public boolean hasConstantBoundarySize() {
@@ -94,6 +122,7 @@ public class LayoutList extends Layout {
 
 	public void addLayout(Layout l) {
 		list.add(l);
+		l.parent = this;
 		if (list.size() == 1) {
 			setActiveLayout(0);
 		}
@@ -124,8 +153,8 @@ public class LayoutList extends Layout {
 	}
 
 	@Override
-	protected ArrayList<GraphicsComponent> getAllComponents() {
-		return list.get(curLayoutID).getAllComponents();
+	public ArrayList<GraphicsComponent> getCurrentComponents() {
+		return list.get(curLayoutID).getCurrentComponents();
 	}
 
 	@Override
@@ -147,12 +176,21 @@ public class LayoutList extends Layout {
 		if (list.size() == 0)
 			return;
 		if (clearGraphics) {
-			P.noStroke();
-			P.fill(255);
-			P.rect(pos.x, pos.y, size.x, size.y);
+			// P.noStroke();
+			// P.fill(backgroundColor.r, backgroundColor.g, backgroundColor.b,
+			// backgroundColor.a);
+			// P.rect(pos.x, pos.y, size.x, size.y);
 			clearGraphics = false;
 		}
 		list.get(curLayoutID).onRender(pos, size);
 	}
 
+	public ArrayList<Layout> getLayouts() {
+		return list;
+	}
+
+@Override
+public void reset() {
+	curLayoutID=0;
+}
 }

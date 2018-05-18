@@ -23,9 +23,8 @@ public class IntTextbox extends Textbox {
 		}
 		
 		String s = getText() + c;
-		int i = 0;
 		try {
-			i = Integer.parseInt(s);
+			Integer.parseInt(s);
 		} catch (NumberFormatException e) {
 			return;
 		}

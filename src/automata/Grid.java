@@ -1,12 +1,7 @@
 package automata;
 
-import java.util.HashMap;
-
 import core.Canvas;
 
-import static main.Applet.P;
-
-import processing.core.PGraphics;
 import processing.core.PVector;
 import util.Color;
 import util.Vector2i;

@@ -1,24 +1,48 @@
 package core;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 import processing.core.PVector;
 import processing.event.MouseEvent;
+import util.Color;
 
 /** represents a screen/display on which GraphicsComponents can be added */
 public abstract class Layout extends GraphicsComponent {
 
-	public Color backgroundColor = Color.WHITE;
-
 	/**
 	 * gets all components currently on screen<br>
 	 * i.e. on a LayoutList, this only returns all the components on the active
-	 * layout
+	 * layout<br>
+	 * non-recursive
 	 * 
 	 */
+	public abstract ArrayList<GraphicsComponent> getCurrentComponents();
 
-	protected abstract ArrayList<GraphicsComponent> getAllComponents();
+	/**
+	 * gets all components and sub-components of the current layout recursively <br>
+	 * i.e. also returns components in nested layouts
+	 * 
+	 * if layouts is set to true, then it also returns layouts and nested layouts
+	 * 
+	 * @return
+	 */
+
+	public abstract ArrayList<GraphicsComponent> getAllComponents(boolean layouts);
+
+	public ArrayList<GraphicsComponent> getAllComponents() {
+		return getAllComponents(false);
+	}
+
+	/**
+	 * sets the background color of this layout and all of its children
+	 */
+	public void setBackgroundColorRecursive(Color c) {
+		backgroundColor = c;
+		// getAllComponents(true).forEach(gc->System.out.println(gc));
+		// System.out.println();
+		getAllComponents(true).forEach(gc -> gc.backgroundColor = c);
+		requestGraphicalUpdate();
+	}
 
 	/**
 	 * normally, the positions and sizes in a layout are cached to avoid
@@ -30,22 +54,29 @@ public abstract class Layout extends GraphicsComponent {
 
 	@Override
 	public void onKeyType(char key) {
-		for (GraphicsComponent g : getAllComponents()) {
+		for (GraphicsComponent g : getCurrentComponents()) {
 			g.onKeyType(key);
 		}
 	}
 
 	@Override
 	public void onMousePress(MouseEvent event) {
-		for (GraphicsComponent g : getAllComponents()) {
+		for (GraphicsComponent g : getCurrentComponents()) {
 			g.onMousePress(event);
 		}
 	}
 
 	@Override
 	public void onMouseRelease(MouseEvent event) {
-		for (GraphicsComponent g : getAllComponents()) {
+		for (GraphicsComponent g : getCurrentComponents()) {
 			g.onMouseRelease(event);
+		}
+	}
+
+	@Override
+	public void onScroll(MouseEvent event) {
+		for (GraphicsComponent g : getCurrentComponents()) {
+			g.onScroll(event);
 		}
 	}
 

@@ -2,10 +2,9 @@ package components;
 
 import static main.Applet.P;
 
-import java.awt.Color;
-
 import core.GraphicsComponent;
 import processing.core.PVector;
+import util.Color;
 
 public class Slider extends GraphicsComponent {
 
@@ -13,11 +12,11 @@ public class Slider extends GraphicsComponent {
 	public float sliderSize = 4;
 	public float strokeWeight = 2;
 
-	public Color knobColor = Button.BACKGROUND_COLOR;
-	public Color knobHoverColor = Button.HOVER_COLOR;
-	public Color knobClickColor = Button.CLICK_COLOR;
-	public Color sliderColor = Button.DISABLED_COLOR;
-	public Color strokeColor = Color.BLACK;
+	public Color knobColor = Color.DarkViolet;
+	public Color knobHoverColor = Color.Violet;
+	public Color knobClickColor = Color.LightViolet;
+	public Color sliderColor = Color.DarkGrey;
+	public Color strokeColor = Color.Black;
 
 	private float min, max, val, incr;
 
@@ -39,9 +38,9 @@ public class Slider extends GraphicsComponent {
 
 	@Override
 	protected void onRender(PVector pos, PVector size) {
-		P.stroke(strokeColor.getRGB());
+		P.stroke(strokeColor.r,strokeColor.g,strokeColor.b);
 		P.strokeWeight(strokeWeight);
-		P.fill(sliderColor.getRGB());
+		P.fill(sliderColor.r,sliderColor.g,sliderColor.b);
 
 		float x = pos.x + knobRadius;
 		float y = pos.y - sliderSize / 2;

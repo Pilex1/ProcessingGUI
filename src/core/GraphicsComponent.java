@@ -2,15 +2,17 @@ package core;
 
 import static main.Applet.P;
 
-import java.awt.Color;
 import java.util.ArrayList;
 
 import processing.core.PVector;
 import processing.event.MouseEvent;
+import util.Color;
 import util.EdgeTuple;
 
 /** all graphical elements extend this class */
 public abstract class GraphicsComponent {
+
+	public Color backgroundColor;
 
 	/** padding around the element */
 	public EdgeTuple padding = new EdgeTuple(2);
@@ -39,6 +41,10 @@ public abstract class GraphicsComponent {
 	protected GraphicsComponent() {
 	}
 
+	public void setPadding(EdgeTuple padding) {
+		this.padding = padding;
+	}
+
 	boolean requiresGraphicalUpdate() {
 		return requireGraphicalUpdate;
 	}
@@ -47,23 +53,23 @@ public abstract class GraphicsComponent {
 		return requirePositionalUpdate;
 	}
 
-	public float getMaxWidth() {
-		return maxSize.x;
+	public final float getMaxWidth() {
+		return getMaxSize().x;
 	}
 
-	public float getMaxHeight() {
-		return maxSize.y;
+	public final float getMaxHeight() {
+		return getMaxSize().y;
 	}
 
 	public PVector getMaxSize() {
 		return maxSize;
 	}
 
-	public void setMaxWidth(float width) {
+	public final void setMaxWidth(float width) {
 		setMaxSize(width, getMaxHeight());
 	}
 
-	public void setMaxHeight(float height) {
+	public final void setMaxHeight(float height) {
 		setMaxSize(getMaxWidth(), height);
 	}
 
@@ -73,29 +79,32 @@ public abstract class GraphicsComponent {
 
 	// if we change the max size, we want the parent to recalculate everything
 	public void setMaxSize(PVector maxSize) {
+		if (parent == null) {
+			// System.out.println(this);
+		}
 		if (parent != null && !maxSize.equals(this.maxSize)) {
 			parent.requestPositionalUpdate();
 		}
 		this.maxSize = maxSize;
 	}
 
-	public float getMinWidth() {
-		return minSize.x;
+	public final float getMinWidth() {
+		return getMinSize().x;
 	}
 
-	public float getMinHeight() {
-		return minSize.y;
+	public final float getMinHeight() {
+		return getMinSize().y;
 	}
 
 	public PVector getMinSize() {
 		return minSize;
 	}
 
-	public void setMinWidth(float width) {
+	public final void setMinWidth(float width) {
 		setMinSize(width, getMinHeight());
 	}
 
-	public void setMinHeight(float height) {
+	public final void setMinHeight(float height) {
 		setMinSize(getMinWidth(), height);
 	}
 
@@ -105,6 +114,13 @@ public abstract class GraphicsComponent {
 
 	// if we change the min size, we want the parent to recalculate everything
 	public void setMinSize(PVector minSize) {
+		if (parent == null) {
+			if (this instanceof GameCanvas) {
+
+			} else {
+				// System.out.println(this);
+			}
+		}
 		if (parent != null && !minSize.equals(this.minSize)) {
 			parent.requestPositionalUpdate();
 		}
@@ -134,7 +150,7 @@ public abstract class GraphicsComponent {
 	protected final void requestGraphicalUpdate() {
 		requireGraphicalUpdate = true;
 		if (this instanceof Layout) {
-			((Layout) this).getAllComponents().forEach(c -> c.requestGraphicalUpdate());
+			((Layout) this).getCurrentComponents().forEach(c -> c.requestGraphicalUpdate());
 		}
 		// System.out.println("Graphical update requested on " + this);
 	}
@@ -143,7 +159,7 @@ public abstract class GraphicsComponent {
 		requirePositionalUpdate = true;
 		requireGraphicalUpdate = true;
 		if (this instanceof Layout) {
-			((Layout) this).getAllComponents().forEach(c -> c.requestPositionalUpdate());
+			((Layout) this).getCurrentComponents().forEach(c -> c.requestPositionalUpdate());
 		}
 		// System.out.println("Positional update requested on " + this);
 	}
@@ -152,7 +168,7 @@ public abstract class GraphicsComponent {
 		if (!disabled) {
 			if (requirePositionalUpdate && this instanceof Layout) {
 				((Layout) this).recalculatePositions(pos, size);
-				ArrayList<GraphicsComponent> children = ((Layout) this).getAllComponents();
+				ArrayList<GraphicsComponent> children = ((Layout) this).getCurrentComponents();
 				for (GraphicsComponent g : children) {
 					g.requestPositionalUpdate();
 				}
@@ -164,10 +180,16 @@ public abstract class GraphicsComponent {
 
 	private void renderComponent(PVector pos, PVector size) {
 		if (requireGraphicalUpdate && this instanceof Layout) {
-			Layout l = (Layout) this;
 			P.noStroke();
-			Color backgroundColor = l.backgroundColor;
-			P.fill(backgroundColor.getRGB());
+			if (backgroundColor == null) {
+				System.out.println(this);
+				System.out.println("null");
+				P.fill(0, 0, 0);
+			} else {
+				System.out.println(this);
+				System.out.println(backgroundColor);
+				P.fill(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+			}
 			P.rect(pos.x, pos.y, size.x, size.y);
 		}
 
@@ -176,7 +198,7 @@ public abstract class GraphicsComponent {
 		// in the child layout will not be carried out
 		if (requireGraphicalUpdate || this instanceof Layout) {
 			if (!(this instanceof Layout)) {
-				System.out.println(this);
+				// System.out.println(this);
 			}
 			onRender(pos, size);
 		}
@@ -197,6 +219,9 @@ public abstract class GraphicsComponent {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public void reset() {
 	}
 
 }

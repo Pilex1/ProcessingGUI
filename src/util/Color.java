@@ -30,22 +30,30 @@ public class Color implements Serializable {
 	public static Color Red;
 	public static Color LightOrange;
 
+	public static Color DarkViolet, Violet, LightViolet;
+	public static Color VeryLightViolet;
+
 	private static int Alpha = 128;
 
 	public static void Init() {
+		DarkViolet = new Color(67, 5, 75);
+		float factor = 1.2f;
+		Violet = DarkViolet.multiply(factor);
+		LightViolet = Violet.multiply(factor);
+		VeryLightViolet = LightViolet.multiply(1.2f);
 
 		LightOrange = new Color(225, 235, 178);
 		Purple = new Color(110, 56, 255);
 		LightPurple = new Color(206, 142, 255);
 		Red = new Color(255, 58, 104);
 
-		Transparent = new Color(255, 255, 255, 0);
+		Transparent = new Color(0, 0, 0, 0);
 
-		White = new Color(255,255,255);
-		LightGrey = new Color(192,192,192);
-		Grey = new Color(128,128,128);
-		DarkGrey = new Color(64,64,64);
-		Black = new Color(0,0,0);
+		White = new Color(255, 255, 255);
+		LightGrey = new Color(192, 192, 192);
+		Grey = new Color(128, 128, 128);
+		DarkGrey = new Color(64, 64, 64);
+		Black = new Color(0, 0, 0);
 
 		LightBlue = new Color(22, 79, 184);
 		MediumBlue = new Color(37, 101, 218);
@@ -77,6 +85,10 @@ public class Color implements Serializable {
 		this((hex & 0xFF0000) >> 16, (hex & 0xFF00) >> 8, (hex & 0xFF));
 	}
 
+	public Color multiply(float c) {
+		return new Color((int) (c * r), (int) (c * g), (int) (c * b), a);
+	}
+
 	public Color Transparent() {
 		return new Color(r, g, b, Alpha);
 	}
@@ -87,6 +99,11 @@ public class Color implements Serializable {
 
 	public int getBrightness() {
 		return (r + g + b) / 3;
+	}
+	
+	@Override
+	public String toString() {
+		return "R: "+r+" G: "+g+" B: "+b+" A: "+a;
 	}
 
 }

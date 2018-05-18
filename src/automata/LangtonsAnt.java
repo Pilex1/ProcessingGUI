@@ -1,12 +1,9 @@
 package automata;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import processing.core.PVector;
 import util.Color;
-import util.Vector2i;
-
 import static main.Applet.P;
 
 public class LangtonsAnt extends Grid<Integer> {

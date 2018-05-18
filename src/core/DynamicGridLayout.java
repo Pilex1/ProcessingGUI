@@ -10,7 +10,7 @@ public class DynamicGridLayout extends GridLayout {
 
 	public DynamicGridLayout() {
 	}
-
+	
 	public boolean addComponentToCol(GraphicsComponent g, int col) {
 		if (col < 0)
 			return false;
@@ -44,9 +44,9 @@ public class DynamicGridLayout extends GridLayout {
 		}
 		gcs.set(y, g);
 
+		g.parent = this;
 		updateSize();
 		recalculateBounds();
-		g.parent = this;
 		return true;
 	}
 
@@ -118,7 +118,7 @@ public class DynamicGridLayout extends GridLayout {
 	}
 
 	@Override
-	protected ArrayList<GraphicsComponent> getAllComponents() {
+	public ArrayList<GraphicsComponent> getCurrentComponents() {
 		ArrayList<GraphicsComponent> l = new ArrayList<>();
 		for (int i = 0; i < components.size(); i++) {
 			for (int j = 0; j < components.get(i).size(); j++) {

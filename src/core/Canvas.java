@@ -1,5 +1,6 @@
 package core;
 
+import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
@@ -162,6 +163,10 @@ public abstract class Canvas extends GraphicsComponent {
 		graphics.rect(x, y, width, height);
 	}
 
+	public void rect(float x, float y, float width, float height, PVector camera) {
+		rect(new Rectangle(x, y, width, height).fromCamera(camera));
+	}
+
 	public void rect(Rectangle rect) {
 		rect(rect.getX1(), rect.getY1(), rect.getWidth(), rect.getHeight());
 	}
@@ -170,21 +175,37 @@ public abstract class Canvas extends GraphicsComponent {
 		rect(rect.fromCamera(camera));
 	}
 
-	public void image(PImage img, float x, float y) {
+	public void image(PImage img, float x, float y, float rotation) {
 		checkDrawState();
-		graphics.image(img, x, y);
+		
+		//graphics.image(img, x, y);
+		
+		graphics.pushMatrix();
+		graphics.translate(x+img.width/2, y+img.height/2);
+		graphics.rotate(rotation);
+		graphics.imageMode = PConstants.CENTER;
+		graphics.image(img,0,0);
+		graphics.popMatrix();
+	}
+
+	public void image(PImage img, PVector pos, float rotation) {
+		image(img, pos.x, pos.y, rotation);
 	}
 
 	public void image(PImage img, PVector pos) {
-		image(img, pos.x, pos.y);
+		image(img, pos, 0);
+	}
+	
+	public void image(PImage img, float x, float y) {
+		image(img, x, y, 0);
+	}
+
+	public void image(PImage img, PVector pos, float rotation, PVector camera) {
+		image(img, PVector.sub(pos, camera), rotation);
 	}
 
 	public void image(PImage img, PVector pos, PVector camera) {
-		image(img, PVector.sub(pos, camera));
-	}
-
-	public void image(PImage img, float x, float y, PVector camera) {
-		image(img, new PVector(x, y), camera);
+		image(img, pos, 0, camera);
 	}
 
 	public void triangle(float x1, float y1, float x2, float y2, float x3, float y3) {

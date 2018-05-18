@@ -3,7 +3,6 @@ package core;
 import static main.Applet.P;
 
 import processing.core.PVector;
-import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
 public class Frame {
@@ -42,5 +41,9 @@ public class Frame {
 
 	public void onMouseRelease(MouseEvent event) {
 		mainComponent.onMouseRelease(event);
+	}
+	
+	public void onScroll(MouseEvent event) {
+		mainComponent.onScroll(event);
 	}
 }

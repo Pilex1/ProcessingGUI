@@ -2,36 +2,32 @@ package components;
 
 import static main.Applet.P;
 
-import java.awt.Color;
-
 import core.IAction;
 import processing.core.PConstants;
 import processing.core.PVector;
 import processing.event.MouseEvent;
+import util.Color;
 
 public class Button extends Label {
 
-	public static final Color HOVER_COLOR = new Color(0xfbbc63);
-	public static final Color BACKGROUND_COLOR = new Color(0xf4c98b);
-	public static final Color DISABLED_COLOR = new Color(0xafafae);
-	public static final Color CLICK_COLOR = new Color(0xffe1b7);
-
-	private Color hoverColor, disabledColor, backgroundColor, clickColor;
+	protected Color hoverColor;
+	protected Color disabledColor;
+	protected Color clickColor;
 
 	public IAction onPress;
 	protected boolean hoveredOver = false;
 	protected boolean clickedOn = false;
-
+	
 	// top left position
 	public Button(String text, IAction onPress) {
 		super(text);
-		hoverColor = HOVER_COLOR;
-		disabledColor = DISABLED_COLOR;
-		backgroundColor = BACKGROUND_COLOR;
-		clickColor = CLICK_COLOR;
+		hoverColor = Color.Violet;
+		clickColor =  Color.LightViolet;
+		disabledColor = new Color(0xafafae);
 		this.onPress = onPress;
+		transparent=false;
 	}
-
+	
 	@Override
 	public void onMousePress(MouseEvent event) {
 		if (event.getButton() == PConstants.LEFT && event.getAction() == MouseEvent.PRESS && hoveredOver && !disabled) {

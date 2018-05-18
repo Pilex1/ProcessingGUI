@@ -1,17 +1,15 @@
 package components;
 
-import java.awt.Color;
 
 import core.IAction;
 import processing.core.PConstants;
 import processing.core.PVector;
 import processing.event.MouseEvent;
+import util.Color;
 
 public class Textbox extends Button {
 
-	public static final Color EDIT_COLOR = new Color(0xefd6b1);
-
-	private Color editColor, hoverColor, backgroundColor, disabledColor;
+	private Color editColor;
 
 	private boolean editing;
 	private boolean rescindNextUnedit;
@@ -29,10 +27,7 @@ public class Textbox extends Button {
 		});
 		hAlign = PConstants.LEFT;
 
-		editColor = EDIT_COLOR;
-		backgroundColor = Button.BACKGROUND_COLOR;
-		hoverColor = Button.HOVER_COLOR;
-		disabledColor = Button.DISABLED_COLOR;
+		editColor = Color.VeryLightViolet;
 	}
 
 	public Textbox() {

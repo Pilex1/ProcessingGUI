@@ -2,6 +2,7 @@ package main;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +25,9 @@ import processing.event.MouseEvent;
 import util.Color;
 
 public class Applet extends PApplet {
+	
+	public static final int WIDTH = 1280;
+	public static final int HEIGHT=  720;
 
 	public boolean[] keys;
 	public boolean keyEnter;
@@ -40,7 +44,7 @@ public class Applet extends PApplet {
 	
 	@Override
 	public void settings() {
-		size(1280, 720);
+		size(WIDTH,HEIGHT);
 		// DO NOT PUT ANY OTHER PROCESSING FUNCTIONS IN HERE
 	}
 
@@ -254,10 +258,15 @@ return langton();
 	public void mouseReleased(MouseEvent event) {
 		frame.onMouseRelease(event);
 	}
+	
+	@Override
+	public void mouseWheel(MouseEvent event) {
+		frame.onScroll(event);
+	}
 
 	@Override
 	public void keyTyped() {
-		frame.onKeyType(key);
+		frame.onKeyType(Character.toLowerCase(key));
 	}
 
 	@Override
@@ -286,6 +295,7 @@ return langton();
 
 	@Override
 	public void keyReleased() {
+		key = Character.toLowerCase(key);
 		if (key >= 0 && key <= 255) {
 			keys[key] = false;
 		}

@@ -1,12 +1,18 @@
 package util;
 
-public class Vector2i {
+import java.io.Serializable;
 
-	public int x, y;
+public class Vector2i implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public int x,y;
 
 	public Vector2i(int x, int y) {
 		this.x = x;
-		this.y=y;
+		this.y = y;
 	}
 
 	@Override
@@ -16,15 +22,15 @@ public class Vector2i {
 		Vector2i i = (Vector2i) obj;
 		return i.x == this.x && i.y == this.y;
 	}
-	
+
 	@Override
-	public Vector2i clone()  {
-		return new Vector2i(x,y);
+	public Vector2i clone() {
+		return new Vector2i(x,  y);
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return 9999999*x+y;
+		return  9999999 * x + y;
 	}
 
 }
